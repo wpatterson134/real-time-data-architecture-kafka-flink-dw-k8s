@@ -4,7 +4,10 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import { createClient } from 'redis';
 import { faker } from '@faker-js/faker';
 import * as dotenv from 'dotenv';
+import { Kafka } from 'kafkajs';
+
 dotenv.config();
+
 
 // Swagger Configuration
 const swaggerOptions = {
@@ -20,6 +23,7 @@ const swaggerOptions = {
   apis: ['./src/app.ts'], // Adjust the path as necessary
 };
 
+
 const specs = swaggerJsdoc(swaggerOptions);
 
 const app = express();
@@ -28,6 +32,13 @@ app.use(express.json());
 console.log('REDIS_HOST:', process.env.REDIS_HOST);
 console.log('REDIS_PORT:', process.env.REDIS_PORT);
 console.log('REDIS_PASSWORD:', process.env.REDIS_PASSWORD);
+console.log('KAFKA_BROKER:', process.env.KAFKA_BROKER);
+
+const kafka = new Kafka({
+  clientId: 'mock-api',
+  brokers: [process.env.KAFKA_BROKER || 'localhost:9092']
+});
+const producer = kafka.producer();
 
 const redisHost = process.env.REDIS_HOST || 'localhost';
 const redisPort = process.env.REDIS_PORT || '6379';
@@ -41,7 +52,9 @@ const redisClient = createClient({
   password: redisPassword,
 });
 
-redisClient.connect().catch(console.error);
+redisClient.connect().then( () => console.log(`
+  Redis client connected to ${redisHost}:${redisPort}
+  `)).catch(console.error);
 
 // API route for creating a user
 /**
@@ -63,6 +76,13 @@ app.post('/mock/user', async (req: Request, res: Response) => {
     const cacheKey = mockData.id.toString();
     const ttl = 300; // 5 minutes
     await redisClient.setEx(cacheKey, ttl, JSON.stringify(mockData));
+
+    await producer.send({
+      topic: 'mock-user-topic',
+      messages: [
+          { value: JSON.stringify(mockData) }
+      ]
+    });
 
     res.send(mockData);
 });
@@ -97,8 +117,18 @@ const generateMockUser = () => {
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-// Start the server
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-  console.log('Swagger docs are available at http://localhost:3000/api-docs');
-});
+
+const run = async () => {
+  await producer.connect();
+
+  // Start the server
+  app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+    console.log('Swagger docs are available at http://localhost:3000/api-docs');
+  });
+
+};
+
+run().catch(console.error);
+
+
