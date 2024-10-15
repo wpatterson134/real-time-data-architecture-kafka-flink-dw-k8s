@@ -1,0 +1,29 @@
+version: '3'
+services:
+  node-backend-api:
+    build: ./node-backend-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis-service
+    env_file:
+      - ./node-backend-api/.env.production
+
+  redis-service:
+    container_name: redis-service
+    image: "redis:alpine"
+    environment:
+      - REDIS_PASSWORD=your_password
+    command:
+      - redis-server
+      - "--requirepass"
+      - "your_password"
+      - "--maxmemory"
+      - "100mb"
+      - "--maxmemory-policy"
+      - "allkeys-lru"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis-data:/data
+
