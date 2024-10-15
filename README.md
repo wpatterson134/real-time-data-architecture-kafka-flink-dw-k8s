@@ -10,14 +10,15 @@
   - [x] Swagger documentation at /api-docs
   - [x] endpoints:
     - [x] [POST] /mock/user
-    - [x] [GET] /mock/user/:userid
+    - [x] [GET]  /mock/user/:userid
+    - [x] [GET]  /metrics (for prometheus)
   - [X] Save user data on the "mock-user-topic"
 - [x] Kafka + Zookeeper
 - [x] CMAK
 - [ ] Api Gateway
-- [ ] Monitoring & Logging
-  - [ ] Grafana
-  - [ ] Prometheus
+- [x] Monitoring & Logging
+  - [x] Grafana
+  - [x] Prometheus
 - [ ] Flink
 - [ ] DW
 - [ ] PowerBI

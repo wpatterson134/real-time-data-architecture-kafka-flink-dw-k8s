@@ -5,9 +5,18 @@ import { createClient } from 'redis';
 import { faker } from '@faker-js/faker';
 import * as dotenv from 'dotenv';
 import { Kafka } from 'kafkajs';
+import { collectDefaultMetrics, Registry, Counter } from 'prom-client';
 
+const register = new Registry();
+collectDefaultMetrics({ register });
 dotenv.config();
 
+const requestCounter = new Counter({
+  name: 'api_requests_total',
+  help: 'Total number of requests',
+  labelNames: ['method', 'route', 'status'],
+});
+register.registerMetric(requestCounter);
 
 // Swagger Configuration
 const swaggerOptions = {
@@ -54,7 +63,17 @@ const redisClient = createClient({
 
 redisClient.connect().then( () => console.log(`
   Redis client connected to ${redisHost}:${redisPort}
-  `)).catch(console.error);
+`)).catch(console.error);
+
+
+app.use((req: Request, res: Response, next) => {
+  res.on('finish', () => {
+    console.log('Request logged:', req.method, req.url, res.statusCode);  // Log para verificar
+    requestCounter.labels(req.method, req.route?.path || req.url, res.statusCode.toString()).inc();
+  });
+  next();
+});
+
 
 // API route for creating a user
 /**
@@ -113,6 +132,13 @@ const generateMockUser = () => {
       },
     };
 };
+
+
+app.get('/metrics', async (req: Request, res: Response) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
 
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));

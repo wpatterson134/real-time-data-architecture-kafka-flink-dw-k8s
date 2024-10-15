@@ -8,6 +8,7 @@ services:
     depends_on:
       - redis-service
       - kafka
+      - prometheus
     env_file:
       - ./node-backend-api/.env.production
 
@@ -61,3 +62,28 @@ services:
       ZK_HOSTS: zookeeper:2181
     volumes:
       - ./data/cmak:/cmak-data
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"  # Prometheus UI
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    ports:
+      - "4000:3000"
+      - "4001:4001"
+    user: "0"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    depends_on:
+      - prometheus
