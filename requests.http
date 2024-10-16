@@ -1,5 +1,5 @@
 # create post request
-POST http://localhost:3000/mock/user
+POST http://127.0.0.1:3001/mock/user
 
 ###
-GET http://localhost:3000/mock/user/1063764092243498
+GET http://127.0.0.1:3001/mock/user/2487268493650204

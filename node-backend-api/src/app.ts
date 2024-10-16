@@ -4,7 +4,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import { createClient } from 'redis';
 import { faker } from '@faker-js/faker';
 import * as dotenv from 'dotenv';
-import { Kafka } from 'kafkajs';
+import { Kafka, Partitioners } from 'kafkajs';
 import { collectDefaultMetrics, Registry, Counter } from 'prom-client';
 
 const register = new Registry();
@@ -27,7 +27,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'A simple Node.js API with Swagger documentation and Redis Cache integration',
     },
-    servers: [{ url: 'http://localhost:3000' }],
+    servers: [{ url: 'http://localhost:3001' }],
   },
   apis: ['./src/app.ts'], // Adjust the path as necessary
 };
@@ -47,7 +47,9 @@ const kafka = new Kafka({
   clientId: 'mock-api',
   brokers: [process.env.KAFKA_BROKER || 'localhost:9092']
 });
-const producer = kafka.producer();
+const producer = kafka.producer({
+  createPartitioner: Partitioners.LegacyPartitioner
+})
 
 const redisHost = process.env.REDIS_HOST || 'localhost';
 const redisPort = process.env.REDIS_PORT || '6379';
@@ -63,6 +65,10 @@ const redisClient = createClient({
 
 redisClient.connect().then( () => console.log(`
   Redis client connected to ${redisHost}:${redisPort}
+`)).catch(console.error);
+
+producer.connect().then( () => console.log(`
+  Kafka producer connected to ${process.env.KAFKA_BROKER}
 `)).catch(console.error);
 
 
@@ -90,31 +96,45 @@ app.use((req: Request, res: Response, next) => {
  *         description: Mock user data created and cached
  */
 app.post('/mock/user', async (req: Request, res: Response) => {
-    const mockData = generateMockUser();
+    try{
+      const mockData = generateMockUser();
 
-    const cacheKey = mockData.id.toString();
-    const ttl = 300; // 5 minutes
-    await redisClient.setEx(cacheKey, ttl, JSON.stringify(mockData));
+      const cacheKey = mockData.id.toString();
+      const ttl = 300; // 5 minutes
 
-    await producer.send({
-      topic: 'mock-user-topic',
-      messages: [
-          { value: JSON.stringify(mockData) }
-      ]
-    });
+      // console.log(`generated mock data: ${JSON.stringify(mockData)}`);
+      await redisClient.setEx(cacheKey, ttl, JSON.stringify(mockData));
 
-    res.send(mockData);
+      await producer.send({
+        topic: 'mock-user-topic',
+        messages: [
+            { value: JSON.stringify(mockData) }
+        ]
+      });
+
+      res.send(mockData);
+    }catch(err){
+      console.error(err);
+      res.status(500).send('Error creating user');
+    }
 });
 
 // Get user data from Redis cache
 app.get('/mock/user/:id', async (req: Request, res: Response) => {
     const userId = req.params.id;
-    const userData = await redisClient.get(userId);
-
-    if (!userData) {
-      res.status(404).send('User not found');
-    } else {
-      res.send(JSON.parse(userData));
+    try{
+      const userData = await redisClient.get(userId);
+      if (!userData) {
+        res.status(404).send('User not found');
+      } else {
+        res.send(JSON.parse(userData));
+      }
+    }catch(err){
+      console.error(err);
+      res.status(500).send({
+        message: 'Error getting user data',
+        error: err,
+      });
     }
 });
 
@@ -139,22 +159,11 @@ app.get('/metrics', async (req: Request, res: Response) => {
   res.end(await register.metrics());
 });
 
-
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-
-const run = async () => {
-  await producer.connect();
-
-  // Start the server
-  app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
-    console.log('Swagger docs are available at http://localhost:3000/api-docs');
-  });
-
-};
-
-run().catch(console.error);
-
+app.listen(3001, () => {
+  console.log('Server is running on http://localhost:3001');
+  console.log('Swagger docs are available at http://localhost:3001/api-docs');
+});
 
