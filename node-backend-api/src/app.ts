@@ -119,18 +119,18 @@ app.get('/mock/user/:id', async (req: Request, res: Response) => {
 });
 
 const generateMockUser = () => {
-    return {
-      id: faker.seed(),
-      name: faker.name.firstName() + ' ' + faker.name.lastName(),
-      email: faker.internet.email(),
-      phone: faker.phone.number(),
-      address: {
-        street: faker.address.streetAddress(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        zip: faker.address.zipCode(),
-      },
-    };
+      return {
+        id: faker.seed(),
+        name: faker.name.firstName() + ' ' + faker.name.lastName(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
+        address: {
+          street: faker.address.streetAddress(),
+          city: faker.address.city(),
+          state: faker.address.state(),
+          zip: faker.address.zipCode(),
+        },
+      };
 };
 
 

@@ -19,8 +19,11 @@
 - [x] Monitoring & Logging
   - [x] Grafana
   - [x] Prometheus
-- [ ] Flink
-- [ ] DW
+- [x] Flink
+  - [x] Read message from kafka
+  - [x] Process it and save it on the DW
+- [x] DW
+  - [x] Configuration
+  - [ ] Creation of the DW tables
 - [ ] PowerBI
 - [ ] Kubernetes
-
