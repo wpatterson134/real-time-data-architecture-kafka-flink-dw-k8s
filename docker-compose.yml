@@ -96,8 +96,9 @@ services:
       - "1521:1521"
       - "8080:8080"
     environment:
-      - APP_USER=your_user
+      - APP_USER=jorgermduarte
       - APP_USER_PASSWORD=123456
+      - ORACLE_DATABASE=jorgermduarte
       - ORACLE_PASSWORD=123456
     volumes:
         - ./data/oracle-data:/opt/oracle/oradata

@@ -25,5 +25,14 @@
 - [x] DW
   - [x] Configuration
   - [x] Creation of the DW tables
-- [ ] PowerBI
+- [x] PowerBI
+  - [x] Oracle Support Plugin (64-bit Oracle Client for Microsoft Tools 19c)
+    - [x] https://www.oracle.com/database/technologies/appdev/ocmt.html
 - [ ] Kubernetes
+
+
+
+# Connecting in PowerBI
+User: your_user
+pass: 123456
+server: localhost:1521/xe
