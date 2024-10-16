@@ -33,6 +33,6 @@
 
 
 # Connecting in PowerBI
-User: your_user
+User: jorgermduarte
 pass: 123456
-server: localhost:1521/xe
+server: localhost:1521/jorgermduarte
