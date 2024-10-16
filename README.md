@@ -1,6 +1,6 @@
 # real-time-data-architecture-kafka-flink-dw-k8s
 
-
+![POC Architecture](.ignore/image.png)
 
 # Elements
 - [x] Redis
