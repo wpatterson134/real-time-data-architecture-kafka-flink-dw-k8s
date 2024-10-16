@@ -24,6 +24,6 @@
   - [x] Process it and save it on the DW
 - [x] DW
   - [x] Configuration
-  - [ ] Creation of the DW tables
+  - [x] Creation of the DW tables
 - [ ] PowerBI
 - [ ] Kubernetes
