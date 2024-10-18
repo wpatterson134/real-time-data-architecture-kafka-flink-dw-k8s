@@ -162,7 +162,35 @@ app.get('/metrics', async (req: Request, res: Response) => {
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-app.listen(3001, () => {
+
+
+app.listen(3001, async () => {
+  // const admin = kafka.admin();
+  // await admin.connect();
+
+  // const topicExists = async (topic: string) => {
+  //   const existingTopics = await admin.listTopics();
+  //   return existingTopics.includes(topic);
+  // };
+
+  // const topicName = 'mock-user-topic';
+
+  // if (!(await topicExists(topicName))) {
+  //   await admin.createTopics({
+  //     topics: [{
+  //       topic: topicName,
+  //       numPartitions: 1,
+  //       replicationFactor: 1
+  //     }]
+  //   });
+  //   console.log(`Tópico ${topicName} criado com sucesso.`);
+  // } else {
+  //   console.log(`Tópico ${topicName} já existe.`);
+  // }
+
+  // await admin.disconnect();
+
+
   console.log('Server is running on http://localhost:3001');
   console.log('Swagger docs are available at http://localhost:3001/api-docs');
 });

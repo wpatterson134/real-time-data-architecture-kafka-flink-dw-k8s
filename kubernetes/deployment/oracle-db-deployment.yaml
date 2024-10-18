@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle-db
+  template:
+    metadata:
+      labels:
+        app: oracle-db
+    spec:
+      containers:
+      - name: oracle-db
+        image: gvenzl/oracle-xe
+        env:
+        - name: APP_USER
+          value: "jorgermduarte"
+        - name: APP_USER_PASSWORD
+          value: "123456"
+        - name: ORACLE_DATABASE
+          value: "jorgermduarte"
+        - name: ORACLE_PASSWORD
+          value: "123456"
+        ports:
+        - containerPort: 1521
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /opt/oracle/oradata
+          name: oracle-data
+      volumes:
+      - name: oracle-data
+        hostPath:
+          path: ./data/oracle-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oracle-db-service
+spec:
+  type: NodePort
+  ports:
+  - port: 1521
+    nodePort: 31521
+  - port: 8080
+    nodePort: 38080
+  selector:
+    app: oracle-db
