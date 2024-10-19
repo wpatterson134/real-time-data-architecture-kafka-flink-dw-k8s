@@ -16,6 +16,8 @@
 - [x] Kafka + Zookeeper
 - [x] CMAK
 - [x] Api Gateway (Ocelot)
+  - [x] Rate Limits
+  - [ ] Authentication / Authorization
 - [x] Monitoring & Logging
   - [x] Grafana
   - [x] Prometheus
@@ -46,32 +48,28 @@
   kubectl apply -f .\kubernetes\deployment\kafka-deployment.yaml
   kubectl apply -f .\kubernetes\jobs\kafka-topics-job.yaml  
 
-  # build the node-backend-api image
+  # build & deploy the node-backend-api image
   docker build -t node-backend-api:latest ./node-backend-api
-
-  # load it to minikube
   minikube image load node-backend-api:latest
-
-  # apply the deployment for the node backend api
   kubectl apply -f .\kubernetes\deployment\node-backend-api-deployment.yaml
-  kubectl apply -f .\kubernetes\deployment\oracle-db-deployment.yaml
 
-
-  # build the data warehouse image
+  # build & deploy the data warehouse image
+   kubectl apply -f .\kubernetes\deployment\oracle-db-deployment.yaml
   docker build -t data-warehouse-app:latest .\datawarehouse\
   minikube image load data-warehouse-app:latest
   kubectl apply -f .\kubernetes\jobs\data-warehouse-job.yaml
 
-  # build the flink-consumer image
+  # build & deploy the flink-consumer image
   docker build -t flink-consumer:latest ./flink-consumer
   minikube image load flink-consumer:latest
   kubectl apply -f .\kubernetes\deployment\flink-consumer-deployment.yaml
 
-  # build and deploy the gateway
+  # build & deploy the gateway
   docker build -t gateway-app:latest .\Gateway\Gateway
   minikube image load gateway-app:latest
   kubectl apply -f .\kubernetes\deployment\gateway-deployment.yaml
 
+  # other stuff
   #kubectl apply -f .\prometheus-deployment.yaml
   #kubectl apply -f .\grafana-deployment.yaml
 ```
