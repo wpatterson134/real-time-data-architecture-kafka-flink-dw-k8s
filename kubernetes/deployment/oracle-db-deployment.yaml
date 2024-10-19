@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: oracle-db
+  labels:
+    app: oracle-db
 spec:
   replicas: 1
   selector:
@@ -30,21 +32,45 @@ spec:
         volumeMounts:
         - mountPath: /opt/oracle/oradata
           name: oracle-data
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        readinessProbe:
+          tcpSocket:
+            port: 1521
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1521
+          initialDelaySeconds: 120
+          periodSeconds: 30
       volumes:
       - name: oracle-data
-        hostPath:
-          path: ./data/oracle-data
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: oracle-db-service
+  labels:
+    app: oracle-db
 spec:
   type: NodePort
   ports:
   - port: 1521
+    targetPort: 1521
     nodePort: 31521
+    protocol: TCP
+    name: oracle-db
   - port: 8080
-    nodePort: 38080
+    targetPort: 8080
+    nodePort: 30800
+    protocol: TCP
+    name: oracle-http
   selector:
     app: oracle-db

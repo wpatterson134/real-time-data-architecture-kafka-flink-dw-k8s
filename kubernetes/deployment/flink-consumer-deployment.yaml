@@ -15,14 +15,24 @@ spec:
       containers:
       - name: flink-consumer
         image: flink-consumer:latest
+        imagePullPolicy: Never
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "production"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service:9092"
+        - name: KAFKA_GROUP_ID
+          value: "flink-group"
+        - name: KAFKA_TOPIC
+          value: "mock-user-topic"
+        - name: DB_URL
+          value: "jdbc:oracle:thin:@oracle-db-service:1521/jorgermduarte"
+        - name: DB_USERNAME
+          value: "jorgermduarte"
+        - name: DB_PASSWORD
+          value: "123456"
         ports:
         - containerPort: 8081
-        envFrom:
-        - configMapRef:
-            name: flink-consumer-env
 ---
 apiVersion: v1
 kind: Service

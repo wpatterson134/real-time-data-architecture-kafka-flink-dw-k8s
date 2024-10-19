@@ -35,15 +35,16 @@
 # Starting Minikube
 
 ```
-  minikube start --driver=docker
+  minikube start --cpus 4 --memory 6192 --driver=docker
   minikube dashboard
 ```
 
 # Publishing everything to the minikube for the first time
 ```
-  kubectl apply -f .\zookeper-deployment.yaml
-  kubectl apply -f .\kafka-deployment.yaml
-  kubectl apply -f .\redis-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\zookeper-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\redis-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\kafka-deployment.yaml
+  kubectl apply -f .\kubernetes\jobs\kafka-topics-job.yaml  
 
   # build the node-backend-api image
   docker build -t node-backend-api:latest ./node-backend-api
@@ -52,16 +53,23 @@
   minikube image load node-backend-api:latest
 
   # apply the deployment for the node backend api
-  kubectl apply -f .\node-backend-api-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\node-backend-api-deployment.yaml
 
-  kubectl apply -f .\prometheus-deployment.yaml
-  kubectl apply -f .\grafana-deployment.yaml
-  kubectl apply -f .\oracle-db-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\oracle-db-deployment.yaml
+
+
+  # build the data warehouse image
+  docker build -t data-warehouse-app:latest .\datawarehouse\
+  minikube image load data-warehouse-app:latest
+  kubectl apply -f .\kubernetes\jobs\data-warehouse-job.yaml
 
   # build the flink-consumer image
   docker build -t flink-consumer:latest ./flink-consumer
   minikube image load flink-consumer:latest
-  kubectl apply -f .\flink-consumer-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\flink-consumer-deployment.yaml
+
+  #kubectl apply -f .\prometheus-deployment.yaml
+  #kubectl apply -f .\grafana-deployment.yaml
 ```
 
 # Minikube useful comands

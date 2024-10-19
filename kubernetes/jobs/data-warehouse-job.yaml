@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: liquibase-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: liquibase-job
+    spec:
+      containers:
+      - name: liquibase
+        image: data-warehouse-app:latest
+        imagePullPolicy: Never
+        env:
+        - name: DB_URL
+          value: "jdbc:oracle:thin:@oracle-db-service:1521/jorgermduarte"
+        - name: DB_USERNAME
+          value: "jorgermduarte"
+        - name: DB_PASSWORD
+          value: "123456"
+      restartPolicy: Never
+  backoffLimit: 4

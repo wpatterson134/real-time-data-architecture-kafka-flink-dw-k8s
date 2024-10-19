@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-kafka-topics
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka-topics
+        image: confluentinc/cp-kafka:latest
+        command:
+          - bash
+          - -c
+          - |
+            echo "Esperando o Kafka estar pronto..."
+            # Loop para verificar a disponibilidade do Kafka
+            for i in {1..20}; do
+              if kafka-topics --bootstrap-server kafka-service:9092 --list &>/dev/null; then
+                echo "Kafka está pronto."
+                break
+              else
+                echo "Kafka não está pronto ainda. Tentativa $i/20..."
+                sleep 5
+              fi
+            done
+
+            # Verificar se o Kafka está realmente pronto
+            if ! kafka-topics --bootstrap-server kafka-service:9092 --list &>/dev/null; then
+              echo "Kafka não está disponível após várias tentativas."
+              exit 1
+            fi
+
+            echo "Criando o tópico 'mock-user-topic'..."
+            kafka-topics --create --bootstrap-server kafka-service:9092 --replication-factor 1 --partitions 1 --topic mock-user-topic
+            echo "Tópico 'mock-user-topic' criado com sucesso."
+      restartPolicy: OnFailure
+  backoffLimit: 4

@@ -4,12 +4,12 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import { createClient } from 'redis';
 import { faker } from '@faker-js/faker';
 import * as dotenv from 'dotenv';
-import { Kafka, Partitioners } from 'kafkajs';
 import { collectDefaultMetrics, Registry, Counter } from 'prom-client';
+import kafka, { Producer } from 'kafka-node';
 
+dotenv.config();
 const register = new Registry();
 collectDefaultMetrics({ register });
-dotenv.config();
 
 const requestCounter = new Counter({
   name: 'api_requests_total',
@@ -18,7 +18,6 @@ const requestCounter = new Counter({
 });
 register.registerMetric(requestCounter);
 
-// Swagger Configuration
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -32,7 +31,6 @@ const swaggerOptions = {
   apis: ['./src/app.ts'], // Adjust the path as necessary
 };
 
-
 const specs = swaggerJsdoc(swaggerOptions);
 
 const app = express();
@@ -43,13 +41,8 @@ console.log('REDIS_PORT:', process.env.REDIS_PORT);
 console.log('REDIS_PASSWORD:', process.env.REDIS_PASSWORD);
 console.log('KAFKA_BROKER:', process.env.KAFKA_BROKER);
 
-const kafka = new Kafka({
-  clientId: 'mock-api',
-  brokers: [process.env.KAFKA_BROKER || 'localhost:9092']
-});
-const producer = kafka.producer({
-  createPartitioner: Partitioners.LegacyPartitioner
-})
+const kafkaClient = new kafka.KafkaClient({ kafkaHost: process.env.KAFKA_BROKER || 'localhost:9092', requestTimeout: 100000 });
+const producer: Producer = new kafka.Producer(kafkaClient);
 
 const redisHost = process.env.REDIS_HOST || 'localhost';
 const redisPort = process.env.REDIS_PORT || '6379';
@@ -63,18 +56,21 @@ const redisClient = createClient({
   password: redisPassword,
 });
 
-redisClient.connect().then( () => console.log(`
-  Redis client connected to ${redisHost}:${redisPort}
-`)).catch(console.error);
+redisClient.connect().then(() => {
+  console.log(`Redis client connected to ${redisHost}:${redisPort}`);
+}).catch(console.error);
 
-producer.connect().then( () => console.log(`
-  Kafka producer connected to ${process.env.KAFKA_BROKER}
-`)).catch(console.error);
+producer.on('ready', async () => {
+  console.log('Kafka Producer connected successfully.');
+});
 
+producer.on('error', (err: Error) => {
+  console.error('Erro no produtor Kafka:', err);
+});
 
 app.use((req: Request, res: Response, next) => {
   res.on('finish', () => {
-    console.log('Request logged:', req.method, req.url, res.statusCode);  // Log para verificar
+    console.log('Request logged:', req.method, req.url, res.statusCode);
     requestCounter.labels(req.method, req.route?.path || req.url, res.statusCode.toString()).inc();
   });
   next();
@@ -96,63 +92,61 @@ app.use((req: Request, res: Response, next) => {
  *         description: Mock user data created and cached
  */
 app.post('/mock/user', async (req: Request, res: Response) => {
-    try{
-      const mockData = generateMockUser();
+  try {
+    const mockData = generateMockUser();
 
-      const cacheKey = mockData.id.toString();
-      const ttl = 300; // 5 minutes
+    const cacheKey = mockData.id.toString();
+    const ttl = 300; // 5 minutes
 
-      // console.log(`generated mock data: ${JSON.stringify(mockData)}`);
-      await redisClient.setEx(cacheKey, ttl, JSON.stringify(mockData));
+    await redisClient.setEx(cacheKey, ttl, JSON.stringify(mockData));
 
-      await producer.send({
-        topic: 'mock-user-topic',
-        messages: [
-            { value: JSON.stringify(mockData) }
-        ]
-      });
+    producer.send([{
+      topic: 'mock-user-topic',
+      messages: [JSON.stringify(mockData)],
+    }], (err, data) => {
+      if (err) console.error('Erro ao enviar mensagem ao Kafka:', err);
+      else console.log('Mensagem enviada:', data);
+    });
 
-      res.send(mockData);
-    }catch(err){
-      console.error(err);
-      res.status(500).send('Error creating user');
-    }
+    res.send(mockData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error creating user');
+  }
 });
 
-// Get user data from Redis cache
 app.get('/mock/user/:id', async (req: Request, res: Response) => {
-    const userId = req.params.id;
-    try{
-      const userData = await redisClient.get(userId);
-      if (!userData) {
-        res.status(404).send('User not found');
-      } else {
-        res.send(JSON.parse(userData));
-      }
-    }catch(err){
-      console.error(err);
-      res.status(500).send({
-        message: 'Error getting user data',
-        error: err,
-      });
+  const userId = req.params.id;
+  try {
+    const userData = await redisClient.get(userId);
+    if (!userData) {
+      res.status(404).send('User not found');
+    } else {
+      res.send(JSON.parse(userData));
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: 'Error getting user data',
+      error: err,
+    });
+  }
 });
 
 const generateMockUser = () => {
-      return {
-        id: faker.seed(),
-        name: faker.name.firstName() + ' ' + faker.name.lastName(),
-        email: faker.internet.email(),
-        phone: faker.phone.number(),
-        address: {
-          street: faker.address.streetAddress(),
-          city: faker.address.city(),
-          state: faker.address.state(),
-          zip: faker.address.zipCode(),
-        },
-      };
+  return {
+    id: faker.seed(),
+    name: faker.name.firstName() + ' ' + faker.name.lastName(),
+    email: faker.internet.email(),
+    phone: faker.phone.number(),
+    address: {
+      street: faker.address.streetAddress(),
+      city: faker.address.city(),
+      state: faker.address.state(),
+      zip: faker.address.zipCode(),
+    },
+  };
 };
-
 
 app.get('/metrics', async (req: Request, res: Response) => {
   res.set('Content-Type', register.contentType);
@@ -162,36 +156,7 @@ app.get('/metrics', async (req: Request, res: Response) => {
 // Swagger UI setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-
-
 app.listen(3001, async () => {
-  // const admin = kafka.admin();
-  // await admin.connect();
-
-  // const topicExists = async (topic: string) => {
-  //   const existingTopics = await admin.listTopics();
-  //   return existingTopics.includes(topic);
-  // };
-
-  // const topicName = 'mock-user-topic';
-
-  // if (!(await topicExists(topicName))) {
-  //   await admin.createTopics({
-  //     topics: [{
-  //       topic: topicName,
-  //       numPartitions: 1,
-  //       replicationFactor: 1
-  //     }]
-  //   });
-  //   console.log(`Tópico ${topicName} criado com sucesso.`);
-  // } else {
-  //   console.log(`Tópico ${topicName} já existe.`);
-  // }
-
-  // await admin.disconnect();
-
-
   console.log('Server is running on http://localhost:3001');
   console.log('Swagger docs are available at http://localhost:3001/api-docs');
 });
-
