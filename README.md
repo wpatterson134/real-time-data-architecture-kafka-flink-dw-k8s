@@ -35,7 +35,7 @@
 # Starting Minikube
 
 ```
-  minikube start --cpus 4 --memory 6192 --driver=docker
+  minikube start --cpus 5 --memory 9192 --disk-size=50g --driver=docker
   minikube dashboard
 ```
 
