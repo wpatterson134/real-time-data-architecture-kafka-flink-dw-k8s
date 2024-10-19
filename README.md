@@ -1,47 +1,37 @@
-# real-time-data-architecture-kafka-flink-dw-k8s
+# Project Description
 
-![POC Architecture](.ignore/image.png)
+This project showcases a local deployment using **Kubernetes with Minikube** to simulate a microservices-based architecture. The environment is structured to demonstrate how various components, such as API gateways, Kafka clusters, and Flink consumers, can be orchestrated to work together for real-time data processing.
 
-# Elements
-- [x] Redis
-  - [x] Eviction Policy LRU
-  - [x] Max memory defined (100MB)
-- [x] Node backend api
-  - [x] Swagger documentation at /api-docs
-  - [x] endpoints:
-    - [x] [POST] /mock/user
-    - [x] [GET]  /mock/user/:userid
-    - [x] [GET]  /metrics (for prometheus)
-  - [X] Save user data on the "mock-user-topic"
-- [x] Kafka + Zookeeper
-- [x] CMAK
-- [x] Api Gateway (Ocelot)
-  - [x] Rate Limits
-  - [ ] Authentication / Authorization
-- [x] Monitoring & Logging
-  - [x] Grafana
-  - [x] Prometheus
-- [x] Flink
-  - [x] Read message from kafka
-  - [x] Process it and save it on the DW
-- [x] DW
-  - [x] Configuration
-  - [x] Creation of the DW tables
-- [x] PowerBI
-  - [x] Oracle Support Plugin (64-bit Oracle Client for Microsoft Tools 19c)
-    - [x] https://www.oracle.com/database/technologies/appdev/ocmt.html
-- [x] Kubernetes
-  - [x] Minikube (https://minikube.sigs.k8s.io/)
+<div style="display: flex; justify-content: space-between;">
+  <img src=".ignore/image.png" alt="POC Architecture" style="width: 70%;" />
+  <img src=".ignore/load-balancer-example.png" alt="Load Balancer Example" style="width: 30%;" />
+</div>
+
+## Key Components:
+1. **API Gateway**: Acts as an entry point for user requests, balancing the load across multiple backend API instances.
+2. **Load Balancer**: Distributes traffic evenly across multiple backend API instances to ensure high availability and fault tolerance.
+3. **Backend API**: A microservice responsible for handling business logic, producing events to Kafka, and interacting with other services.
+4. **Kafka Cluster**: Handles event-driven communication, producing and consuming messages through topics like `mock-user-topic`.
+5. **Flink Consumer**: Ingests data from Kafka, performing ETL (Extract, Transform, Load) tasks and pushing the processed data to a **Data Warehouse**.
+6. **Data Warehouse (DW)**: Stores processed data, making it accessible for analysis and reporting.
+7. **Redis Cache**: Used as an in-memory data store to optimize performance by caching frequently accessed data, reducing load on the backend services and databases.
+8. **Monitoring and Logging**: Services such as Prometheus and Grafana are used to track system health, performance metrics, and logs.
+
+## Local Environment:
+- **Minikube** is used to run this Kubernetes setup locally for demonstration purposes. Minikube allows all services to run within a single-node cluster, emulating a real-world microservices architecture. The environment is configured with several deployments, including Kafka, Flink, Oracle DB, Redis, Prometheus, and Redis, to mimic a distributed system.
+
+## Future Expansion:
+- If this were a production-ready setup, the architecture would scale across multiple **Kubernetes clusters**. The **Master Node** would manage **worker nodes**, ensuring scalability, high availability, and failover capabilities. Using a more distributed architecture would ensure that the platform can handle real-world production loads with increased reliability and flexibility.
 
 
-# Starting Minikube
+## Starting Minikube
 
 ```
   minikube start --cpus 5 --memory 9192 --disk-size=50g --driver=docker
   minikube dashboard
 ```
 
-# Publishing everything to the minikube for the first time
+## Publishing everything to the minikube for the first time
 ```
   kubectl apply -f .\kubernetes\deployment\zookeper-deployment.yaml
   kubectl apply -f .\kubernetes\deployment\redis-deployment.yaml
@@ -74,7 +64,7 @@
   #kubectl apply -f .\grafana-deployment.yaml
 ```
 
-# Minikube useful comands
+## Minikube useful comands
 ```
   # list pods
   kubectl get pods
@@ -82,7 +72,7 @@
   kubectl port-forward <pod-name> 3001:3001
 ```
 
-# Connecting in PowerBI
+## Connecting in PowerBI
 User: jorgermduarte
 pass: 123456
 server: localhost:1521/jorgermduarte
