@@ -1,4 +1,5 @@
-
+/Gateway/Gateway/bin/**
+/Gateway/Gateway/obj/**
 /data/**
 # Logs
 logs
