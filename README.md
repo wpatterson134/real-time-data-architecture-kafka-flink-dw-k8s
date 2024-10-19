@@ -15,7 +15,7 @@
   - [X] Save user data on the "mock-user-topic"
 - [x] Kafka + Zookeeper
 - [x] CMAK
-- [ ] Api Gateway
+- [x] Api Gateway (Ocelot)
 - [x] Monitoring & Logging
   - [x] Grafana
   - [x] Prometheus
@@ -28,8 +28,8 @@
 - [x] PowerBI
   - [x] Oracle Support Plugin (64-bit Oracle Client for Microsoft Tools 19c)
     - [x] https://www.oracle.com/database/technologies/appdev/ocmt.html
-- [ ] Kubernetes
-  - [ ] Minikube (https://minikube.sigs.k8s.io/)
+- [x] Kubernetes
+  - [x] Minikube (https://minikube.sigs.k8s.io/)
 
 
 # Starting Minikube
@@ -67,6 +67,11 @@
   docker build -t flink-consumer:latest ./flink-consumer
   minikube image load flink-consumer:latest
   kubectl apply -f .\kubernetes\deployment\flink-consumer-deployment.yaml
+
+  # build and deploy the gateway
+  docker build -t gateway-app:latest .\Gateway\Gateway
+  minikube image load gateway-app:latest
+  kubectl apply -f .\kubernetes\deployment\gateway-deployment.yaml
 
   #kubectl apply -f .\prometheus-deployment.yaml
   #kubectl apply -f .\grafana-deployment.yaml
