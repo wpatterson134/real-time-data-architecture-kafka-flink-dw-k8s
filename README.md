@@ -54,7 +54,6 @@
 
   # apply the deployment for the node backend api
   kubectl apply -f .\kubernetes\deployment\node-backend-api-deployment.yaml
-
   kubectl apply -f .\kubernetes\deployment\oracle-db-deployment.yaml
 
 

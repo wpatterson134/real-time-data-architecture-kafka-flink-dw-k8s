@@ -1,12 +1,41 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Jorge\\Desktop\\cadeiras\\si2\\real-time-data-architecture-kafka-flink-dw-k8s\\Gateway\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\Duarte\\Documents\\github\\jorgermduarte\\real-time-data-architecture-kafka-flink-dw-k8s\\Gateway\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{01D905DA-1447-43AD-A8EE-6433D45A3F2C}|Gateway\\Gateway.csproj|c:\\users\\duarte\\documents\\github\\jorgermduarte\\real-time-data-architecture-kafka-flink-dw-k8s\\gateway\\gateway\\ocelot.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{01D905DA-1447-43AD-A8EE-6433D45A3F2C}|Gateway\\Gateway.csproj|solutionrelative:gateway\\ocelot.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 1454,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ocelot.json",
+              "DocumentMoniker": "C:\\Users\\Duarte\\Documents\\github\\jorgermduarte\\real-time-data-architecture-kafka-flink-dw-k8s\\Gateway\\Gateway\\ocelot.json",
+              "RelativeDocumentMoniker": "Gateway\\ocelot.json",
+              "ToolTip": "C:\\Users\\Duarte\\Documents\\github\\jorgermduarte\\real-time-data-architecture-kafka-flink-dw-k8s\\Gateway\\Gateway\\ocelot.json",
+              "RelativeToolTip": "Gateway\\ocelot.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-10-19T23:01:50.808Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }
