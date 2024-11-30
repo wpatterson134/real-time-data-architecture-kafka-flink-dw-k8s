@@ -5,6 +5,8 @@ import * as dotenv from 'dotenv';
 import { collectDefaultMetrics, Registry, Counter } from 'prom-client';
 import EnrollmentRouter from './app/routers/enrollment';
 import CourseRouter from './app/routers/course';
+import PerformanceRouter from './app/routers/performance';
+import BenchmarkRouter from './app/routers/benchmark';
 
 dotenv.config();
 const register = new Registry();
@@ -50,6 +52,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use('/api/enrollments', EnrollmentRouter);
 app.use('/api/courses', CourseRouter);
+app.use('/api/performance', PerformanceRouter);
+app.use('/api/benchmarks', BenchmarkRouter);
 
 app.listen(3001, async () => {
   console.log('Server is running on http://localhost:3001');
