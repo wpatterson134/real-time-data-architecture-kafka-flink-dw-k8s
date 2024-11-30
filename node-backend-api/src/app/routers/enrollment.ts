@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
 import { parse } from 'path';
+import RedisClient from '../../infra/redis';
 
 const router = express.Router();
 
@@ -291,19 +292,29 @@ const generateMockStudent = (studentid: number, academicyear: number) => ({
   },
 });
 
-// ex: http://localhost:3001/api/enrollments/course/1/student/1
-router.get('/course/:courseid/student/:studentid/year/:academicyear', async (req: Request, res: Response) => {
+// ex: http://localhost:3001/api/enrollments/course/1/student/1/year/2020
+router.get('/course/:courseid/student/:studentid/year/:academicyear', async (req: any, res: any) => {
   try {
-    const { studentid, courseid, academicyear } = req.params;
-    const mockStudent = generateMockStudent(parseInt(studentid),parseInt(academicyear));
-    const mockEnrollment = generateMockEnrollment(mockStudent, parseInt(academicyear), parseInt(courseid) );
+    const { courseid, studentid, academicyear } = req.params;
+    const intCourseId = parseInt(courseid);
+    const intStudentId = parseInt(studentid);
+    const intAcademicYear = parseInt(academicyear);
 
-    //await sendMessageToKafka('enrollment-topic', mockEnrollment);
-
-    res.status(201).json(mockEnrollment);
+    if (isNaN(intCourseId) || isNaN(intStudentId) || isNaN(intAcademicYear)) {
+        return res.status(400).json({ error: 'Invalid course ID or student ID or academic year' });
+    }
+    const bussiness_key = `enrll-${intCourseId}-${intStudentId}-${intAcademicYear}`;
+    const enrollment_data = await RedisClient.get(bussiness_key)
+    if (enrollment_data) {
+        return res.json(JSON.parse(enrollment_data));
+    } else {
+      const mockStudent = generateMockStudent(parseInt(studentid),parseInt(academicyear));
+      const mockEnrollment = generateMockEnrollment(mockStudent, parseInt(academicyear), parseInt(courseid) );
+      await RedisClient.set(bussiness_key, JSON.stringify(mockEnrollment));
+      return res.json(mockEnrollment);
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error creating enrollment');
+      return res.status(500).json({ error: "Internal server error", details: error });
   }
 });
 

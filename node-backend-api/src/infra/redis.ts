@@ -7,7 +7,7 @@ console.log('KAFKA_BROKER:', process.env.KAFKA_BROKER);
 
 const redisHost = process.env.REDIS_HOST || 'localhost';
 const redisPort = process.env.REDIS_PORT || '6379';
-const redisPassword = process.env.REDIS_PASSWORD || '';
+const redisPassword = process.env.REDIS_PASSWORD || 'your_password';
 
 const redisClient = createClient({
   socket: {
@@ -24,4 +24,19 @@ redisClient.connect().then(() => {
 
 const RedisClient = {
     getClient: () => redisClient,
+    get: async (key: string) => {
+       let response = null;
+       try {
+            response = await redisClient.get(key);
+            return response;
+       } catch (error) {
+           console.error('Error in RedisClient.get:', error);
+       }
+        return response;
+    },
+    set: async (key: string, value: string) => {
+       return redisClient.set(key, value);
+    },
 };
+
+export default RedisClient;

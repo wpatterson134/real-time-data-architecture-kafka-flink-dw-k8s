@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
+import RedisClient from '../../infra/redis';
 
 const router = express.Router();
 
@@ -182,13 +183,25 @@ const mockCourse = (courseid: number) => {
 
 
 // ex: http://localhost:3001/api/courses/1
-router.get('/:courseid', async (req: Request, res: Response) => {
+router.get('/:courseid', async (req: any, res: any) => {
     try {
         const { courseid } = req.params;
-        res.json(mockCourse(parseInt(courseid)));
+        const intCourseId = parseInt(courseid);
+
+        if (isNaN(intCourseId)) {
+            return res.status(400).json({ error: 'Invalid course ID' });
+        }
+        const bussiness_key = `course-${intCourseId}`;
+        const course_data = await RedisClient.get(bussiness_key)
+        if (course_data) {
+            return res.json(JSON.parse(course_data));
+        } else {
+            const course = mockCourse(intCourseId);
+            await RedisClient.set(bussiness_key, JSON.stringify(course));
+            return res.json(course);
+        }
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Error creating enrollment');
+        return res.status(500).json({ error: "Internal server error", details: error });
     }
 });
 

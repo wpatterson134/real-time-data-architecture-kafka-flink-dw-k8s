@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
 import { parse } from 'path';
+import RedisClient from '../../infra/redis';
 
 const router = express.Router();
 
@@ -56,9 +57,29 @@ const mockBenchmark = (studentid: number, academicyear: number) => {
 };
 
 // example: http://localhost:3001/api/benchmarks/student/1/year/2020
-router.get('/student/:studentid/year/:academicyear', (req: Request, res: Response) => {
-    const { studentid, academicyear } = req.params;
-    res.json(mockBenchmark(parseInt(studentid), parseInt(academicyear)));
+router.get('/student/:studentid/year/:academicyear', async (req: any, res: any) => {
+    try {
+        const { studentid, academicyear } = req.params;
+
+        const studentId = parseInt(studentid);
+        const academicYear = parseInt(academicyear);
+
+        if (isNaN(studentId) || isNaN(academicYear)) {
+            return res.status(400).json({ error: 'Invalid student ID or academic year' });
+        }
+        const bussiness_key = `bmrk-${studentId}-${academicYear}`;
+        const benchmark_data = await RedisClient.get(bussiness_key)
+        if (benchmark_data) {
+            return res.json(JSON.parse(benchmark_data));
+        } else {
+            const benchmark = mockBenchmark(studentId, academicYear);
+            await RedisClient.set(bussiness_key, JSON.stringify(benchmark));
+            return res.json(benchmark);
+        }
+    } catch (error) {
+        return res.status(500).json({ error: "Internal server error", details: error });
+    }
 });
+
 
 export default router;

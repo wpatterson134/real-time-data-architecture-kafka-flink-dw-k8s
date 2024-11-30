@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
+import RedisClient from '../../infra/redis';
 
 const router = express.Router();
 
@@ -32,9 +33,27 @@ const mockPerformanceData = (enrollmentid: number, subjectid: number) => {
 };
 
 // ex:  http://localhost:3001/api/performance/enrollment/1/subject/1
-router.get('/enrollment/:enrollmentid/subject/:subjectid', (req: Request, res: Response) => {
-    const { enrollmentid, subjectid } = req.params;
-    res.json(mockPerformanceData(parseInt(enrollmentid), parseInt(subjectid)));
+router.get('/enrollment/:enrollmentid/subject/:subjectid', async (req: any, res: any) => {
+    try {
+        const { enrollmentid, subjectid } = req.params;
+        const intenrollmentid = parseInt(enrollmentid);
+        const intsubjectid = parseInt(subjectid);
+    
+        if (isNaN(intenrollmentid) || isNaN(intsubjectid)) {
+            return res.status(400).json({ error: 'Invalid enrollment ID or subject ID' });
+        }
+        const bussiness_key = `performance-${intenrollmentid}-${intsubjectid}`;
+        const perf_data = await RedisClient.get(bussiness_key)
+        if (perf_data) {
+            return res.json(JSON.parse(perf_data));
+        } else {
+          const mockperf = mockPerformanceData(parseInt(enrollmentid), parseInt(subjectid));
+          await RedisClient.set(bussiness_key, JSON.stringify(mockperf));
+          return res.json(mockperf);
+        }
+      } catch (error) {
+          return res.status(500).json({ error: "Internal server error", details: error });
+      }
 });
 
 export default router;
