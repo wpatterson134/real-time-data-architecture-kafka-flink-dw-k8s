@@ -16,7 +16,7 @@ const KafkaProducer = {
   sendMessages: (topic: string, message: any) => {
     return new Promise((resolve: any, reject: any) => {
       producer.send([
-        { topic, JSON.stringify(message) },
+        { topic, messages: JSON.stringify(message) },
       ], (err: any, data: any) => {
         if (err) return reject(err);
         resolve(data);
