@@ -114,14 +114,14 @@ Table D_ENROLLMENT_FINANCIAL_STATUS {
 // }
 
 // Fato de exames (Relatório de exames feitos pelos alunos)
-Table D_EXAMS {
-  EXAM_ID int [pk, increment] // Primary Key
-  TIME_ID int [ref: > D_TIME.TIME_ID]
-  STUDENT_ID int [ref: > D_STUDENTS.STUDENT_ID] // Foreign Key to Students
-  SUBJECT_ID int [ref: > D_SUBJECTS.SUBJECT_ID]
-  ACADEMIC_YEAR_ID int  [ref: > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID]
-  EXAM_GRADE decimal(5,2) // Grade obtained in the exam
-}
+//Table D_EXAMS {
+ // EXAM_ID int [pk, increment] // Primary Key
+ // TIME_ID int [ref: > D_TIME.TIME_ID]
+ // STUDENT_ID int [ref: > D_STUDENTS.STUDENT_ID] // Foreign Key to Students
+ // SUBJECT_ID int [ref: > D_SUBJECTS.SUBJECT_ID]
+ // ACADEMIC_YEAR_ID int  [ref: > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID]
+ // EXAM_GRADE decimal(5,2) // Grade obtained in the exam
+//}
 
 Table F_BENCHMARK_SUCCESS {
   BENCHMARK_SUCCESS_ID int  [pk, increment]

@@ -100,19 +100,6 @@ const validCourses = [
     "Master of Science in Operations Analytics",
 ]
 
-const mockSubject = (credits: number, first_semester: boolean, year: number) => {
-    return {
-        subject_id: faker.number.int(),
-        subject_name: faker.helpers.arrayElement(validSubjects),
-        subject_code: faker.helpers.replaceSymbols('###-###'),
-        subject_description: faker.lorem.paragraph(),
-        subject_credits: credits,
-        first_semester : first_semester ? 1 : 0,
-        second_semester : first_semester ? 0 : 1,
-        year : year,
-    };
-}
-
 const mockCourse = (courseid: number) => {
     const mock = {
         course: {
@@ -121,9 +108,16 @@ const mockCourse = (courseid: number) => {
             course_code: faker.helpers.replaceSymbols('###-###'),
             course_description: faker.lorem.paragraph(),
             course_credits: 0,
+            field_of_study: '',
+            course_type: "",
+            course_duration_years: 0,
             subjects: [],
         },
     } as any;
+
+    mock.course.field_of_study = mock.course.course_name.split(' in ')[1];
+    mock.course.course_type = mock.course.course_name.includes('Bachelor') ? 'Bachelor' : 'Master';
+    mock.course.course_duration_years = mock.course.course_type === 'Bachelor' ? 3 : 2;
 
     let credits = 0;
     const isBachelor = mock.course.course_name.includes('Bachelor');
@@ -167,6 +161,7 @@ const mockCourse = (courseid: number) => {
                     subject_name: subjectName,
                     subject_code: faker.helpers.replaceSymbols('###-###'),
                     subject_description: faker.lorem.paragraph(),
+                    subject_type: faker.helpers.arrayElement(['Mandatory']),
                     subject_credits: subjectCredits,
                     first_semester: semester === 0 ? 1 : 0,
                     second_semester: semester === 1 ? 1 : 0,
