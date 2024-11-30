@@ -23,12 +23,13 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
 ## Future Expansion:
 - If this were a production-ready setup, the architecture would scale across multiple **Kubernetes clusters**. The **Master Node** would manage **worker nodes**, ensuring scalability, high availability, and failover capabilities. Using a more distributed architecture would ensure that the platform can handle real-world production loads with increased reliability and flexibility.
 
-
 ## Starting Minikube
 
 ```
   minikube start --cpus 5 --memory 9192 --disk-size=50g --driver=docker
   minikube dashboard
+  docker context ls
+  //eval $(minikube -p minikube docker-env)
 ```
 
 ## Publishing everything to the minikube for the first time
@@ -36,7 +37,7 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
   kubectl apply -f .\kubernetes\deployment\zookeper-deployment.yaml
   kubectl apply -f .\kubernetes\deployment\redis-deployment.yaml
   kubectl apply -f .\kubernetes\deployment\kafka-deployment.yaml
-  kubectl apply -f .\kubernetes\jobs\kafka-topics-job.yaml  
+  kubectl apply -f .\kubernetes\jobs\kafka-topics-job.yaml
 
   # build & deploy the node-backend-api image
   docker build -t node-backend-api:latest ./node-backend-api

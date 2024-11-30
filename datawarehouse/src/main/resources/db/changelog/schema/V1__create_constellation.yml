@@ -1,0 +1,351 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_STUDENTS
+            columns:
+              - column:
+                  name: STUDENT_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: SOCIOECONOMIC_ID
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: DEMOGRAPHIC_ID
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: NAME
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_STUDENT_DEMOGRAPHIC_DATA
+            columns:
+              - column:
+                  name: STUDENT_DEMOGRAPHIC_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: DATE_OF_BIRTH
+                  type: date
+              - column:
+                  name: NATIONALITY
+                  type: varchar(50)
+              - column:
+                  name: MARITAL_STATUS
+                  type: varchar(50)
+              - column:
+                  name: GENDER
+                  type: varchar(20)
+              - column:
+                  name: ETHNICITY
+                  type: varchar(50)
+              - column:
+                  name: CITY_OF_BIRTH
+                  type: varchar(100)
+              - column:
+                  name: COUNTRY_OF_BIRTH
+                  type: varchar(100)
+              - column:
+                  name: CURRENT_RESIDENCE_TYPE
+                  type: varchar(50)
+
+  - changeSet:
+      id: 3
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_SOCIOECONOMIC_DATA
+            columns:
+              - column:
+                  name: SOCIOECONOMIC_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: SCHOLARSHIP_STATUS
+                  type: varchar(50)
+              - column:
+                  name: FAMILY_INCOME
+                  type: decimal(10, 2)
+              - column:
+                  name: INCOME
+                  type: decimal(10, 2)
+              - column:
+                  name: RESPONSABLE_PARENT_EDUCATION_LEVEL
+                  type: varchar(100)
+              - column:
+                  name: RESPONSABLE_PARENT_OCCUPATION
+                  type: varchar(100)
+              - column:
+                  name: HAS_INTERNET_ACCESS
+                  type: boolean
+              - column:
+                  name: HAS_COMPUTER_ACCESS
+                  type: boolean
+              - column:
+                  name: WORKING_STATUS
+                  type: varchar(50)
+
+  - changeSet:
+      id: 4
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_COURSES
+            columns:
+              - column:
+                  name: COURSE_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: COURSE_NAME
+                  type: varchar(100)
+              - column:
+                  name: FIELD_OF_STUDY_ID
+                  type: int
+              - column:
+                  name: COURSE_TYPE
+                  type: varchar(50)
+              - column:
+                  name: DURATION_YEARS
+                  type: int
+
+  - changeSet:
+      id: 5
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_FIELDS_OF_STUDY
+            columns:
+              - column:
+                  name: FIELD_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: FIELD_NAME
+                  type: varchar(50)
+
+  - changeSet:
+      id: 6
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_SUBJECTS
+            columns:
+              - column:
+                  name: SUBJECT_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: SUBJECT_NAME
+                  type: varchar(100)
+              - column:
+                  name: COURSE_ID
+                  type: int
+              - column:
+                  name: ECTS
+                  type: int
+              - column:
+                  name: SUBJECT_TYPE
+                  type: varchar(50)
+
+  - changeSet:
+      id: 7
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_TIME
+            columns:
+              - column:
+                  name: TIME_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: DAY
+                  type: int
+              - column:
+                  name: MONTH
+                  type: int
+              - column:
+                  name: YEAR
+                  type: int
+              - column:
+                  name: SEMESTER
+                  type: int
+              - column:
+                  name: WEEKDAY
+                  type: varchar(20)
+              - column:
+                  name: DATE
+                  type: date
+
+  - changeSet:
+      id: 8
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_ACADEMIC_YEAR
+            columns:
+              - column:
+                  name: ACADEMIC_YEAR_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: ACADEMIC_YEAR
+                  type: varchar(20)
+              - column:
+                  name: START_DATE
+                  type: date
+              - column:
+                  name: END_DATE
+                  type: date
+
+  - changeSet:
+      id: 9
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: F_ACADEMIC_PERFORMANCE
+            columns:
+              - column:
+                  name: ENROLLMENT_SUBJECT_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: ENROLLMENT_ID
+                  type: int
+              - column:
+                  name: SUBJECT_ID
+                  type: int
+              - column:
+                  name: TIME_ID
+                  type: int
+              - column:
+                  name: FINAL_GRADE
+                  type: decimal(5,2)
+              - column:
+                  name: STATUS
+                  type: int
+
+  - changeSet:
+      id: 10
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_ENROLLMENTS
+            columns:
+              - column:
+                  name: ENROLLMENT_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: STUDENT_ID
+                  type: int
+              - column:
+                  name: COURSE_ID
+                  type: int
+              - column:
+                  name: ACADEMIC_YEAR_ID
+                  type: int
+              - column:
+                  name: FINANCIAL_STATUS_ID
+                  type: int
+              - column:
+                  name: ENROLLMENT_MODE
+                  type: varchar(50)
+              - column:
+                  name: ENROLLMENT_DATE
+                  type: date
+              - column:
+                  name: ENROLLMENT_STATUS
+                  type: varchar(50)
+              - column:
+                  name: TUITION_FEES
+                  type: decimal(10,2)
+
+  - changeSet:
+      id: 11
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: D_ENROLLMENT_FINANCIAL_STATUS
+            columns:
+              - column:
+                  name: FINANCIAL_STATUS_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: TUITION_FEES_DUE
+                  type: decimal(10,2)
+              - column:
+                  name: FINANCIAL_STATUS
+                  type: varchar(20)
+              - column:
+                  name: FINANCIAL_SUPPORT_AMOUNT
+                  type: decimal(10,2)
+
+  - changeSet:
+      id: 12
+      author: jorge.duarte
+      changes:
+        - createTable:
+            tableName: F_BENCHMARK_SUCCESS
+            columns:
+              - column:
+                  name: BENCHMARK_SUCCESS_ID
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: STUDENT_ID
+                  type: int
+              - column:
+                  name: COURSE_ID
+                  type: int
+              - column:
+                  name: ACADEMIC_YEAR_OF_COMPLETION_ID
+                  type: int
+              - column:
+                  name: VERIFICATION_TIME_ID
+                  type: int
+              - column:
+                  name: WORKING_ON_FIELD_SINCE_ID
+                  type: int
+              - column:
+                  name: IS_WORKING_ON_THE_FIELD
+                  type: boolean

@@ -1,0 +1,14 @@
+[x](F_EXAMS) compreensão profunda e uma monitorização eficaz do desempenho académico dos seus estudantes
+[x]facilite a tomada de decisões estratégicas, visando a melhoria contínua do ensino e o sucesso dos alunos.
+[x]cursos,
+[x]disciplinas,
+[x]informações sobre os alunos (incluindo dados demográficos e socioeconómicos).
+[X]permita análises detalhadas por diferentes períodos, como semestres e anos letivos dos últimos cinco anos.
+[X]considerar variáveis como o regime de frequência (tempo inteiro ou parcial) e as condições socioeconómicas dos estudantes.
+[X]matrículas e situação financeira
+[X]o estado das matrículas, identificando estudantes com matrículas pendentes ou não concluídas
+[X]deve ser capaz de revelar informações sobre propinas em atraso ou apoios financeiros recebidos
+[X]e sobre os diversos cursos (maior adesão, maior sucesso de saída)
+
+
+
