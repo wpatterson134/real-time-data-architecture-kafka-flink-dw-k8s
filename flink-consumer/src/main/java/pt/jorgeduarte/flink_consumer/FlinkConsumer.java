@@ -1,61 +1,59 @@
 package pt.jorgeduarte.flink_consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.java.typeutils.runtime.kryo.KryoSerializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
-import pt.jorgeduarte.flink_consumer.dtos.UserDTO;
-import pt.jorgeduarte.flink_consumer.dtos.mappers.UserMapper;
-import pt.jorgeduarte.flink_consumer.persistent.entities.User;
-import pt.jorgeduarte.flink_consumer.utils.DatabaseUtil;
+import org.apache.flink.streaming.util.serialization.JSONKeyValueDeserializationSchema;
+import org.apache.kafka.common.serialization.ListDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.Course;
+import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.Subject;
+import pt.jorgeduarte.flink_consumer.processors.IMessageProcessor;
+import pt.jorgeduarte.flink_consumer.processors.MessageProcessorFactory;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class FlinkConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(FlinkConsumer.class);
+
     public static void main(String[] args) throws Exception {
-        // Retrieve environment variables
+        logger.info("Starting Flink consumer with Kafka configurations");
+
         String kafkaBootstrapServers = System.getenv("KAFKA_BOOTSTRAP_SERVERS");
         String kafkaGroupId = System.getenv("KAFKA_GROUP_ID");
         String kafkaTopic = System.getenv("KAFKA_TOPIC");
 
-        String dbUrl = System.getenv("DB_URL");
-        String dbUsername = System.getenv("DB_USERNAME");
-        String dbPassword = System.getenv("DB_PASSWORD");
+        if (kafkaBootstrapServers == null || kafkaGroupId == null || kafkaTopic == null) {
+            throw new IllegalArgumentException("KAFKA_BOOTSTRAP_SERVERS, KAFKA_GROUP_ID, or KAFKA_TOPIC is not set");
+        }
 
-        // Initialize database connection
-        DatabaseUtil.initialize(dbUrl, dbUsername, dbPassword);
-
-        // Set up Flink execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        logger.info("Flink execution environment initialized");
 
-        // Configure Kafka consumer properties
         Properties properties = new Properties();
         properties.setProperty("bootstrap.servers", kafkaBootstrapServers);
         properties.setProperty("group.id", kafkaGroupId);
+        logger.info("Configured Kafka consumer with bootstrap servers: {} and group id: {}", kafkaBootstrapServers, kafkaGroupId);
 
         FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<>(
                 kafkaTopic,
                 new SimpleStringSchema(),
                 properties
         );
-
+        consumer.setStartFromEarliest();
         DataStream<String> stream = env.addSource(consumer);
+        logger.info("Started consuming messages from Kafka topic: {}", kafkaTopic);
+        stream.print();
+        IMessageProcessor<?> processor = MessageProcessorFactory.getProcessor(kafkaTopic);
 
-        stream.map(value -> {
-            ObjectMapper objectMapper = new ObjectMapper();
-            UserDTO userDTO = objectMapper.readValue(value, UserDTO.class);
-            User user = UserMapper.INSTANCE.toUser(userDTO);
-            try {
-                DatabaseUtil.saveUser(user);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                // Handle exception appropriately
-            }
-            return value;
-        });
+        processor.processMessage(stream, env);
 
-        env.execute("Flink Kafka to Oracle Data Warehouse");
+        env.execute("Flink Kafka Consumer");
     }
 }
