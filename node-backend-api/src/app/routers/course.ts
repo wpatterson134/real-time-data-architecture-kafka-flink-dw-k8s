@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
 import RedisClient from '../../infra/redis';
+import KafkaProducer from '../../infra/kafka';
 
 const router = express.Router();
 
@@ -79,7 +80,6 @@ const validSubjects = [
 ];
 
 const validCourses = [
-    "Bachelor of Science in Computer Science",
     "Bachelor of Science in Software Engineering",
     "Bachelor of Science in Information Technology",
     "Bachelor of Science in Information Systems",
@@ -89,6 +89,27 @@ const validCourses = [
     "Bachelor of Science in Financial Analytics",
     "Bachelor of Science in Marketing Analytics",
     "Bachelor of Science in Operations Analytics",
+    "Bachelor of Science in Computer Science and Mathematics",
+    "Bachelor of Science in Computer Science and Communication Studies",
+    "Bachelor of Science in Computer Science and Computer Programming",
+    "Bachelor of Science in Computer Science and Web Development",
+    "Bachelor of Science in Computer Science and Mobile Development",
+    "Bachelor of Science in Computer Science and Game Development",
+    "Bachelor of Science in Computer Science and Database Management",
+    "Bachelor of Science in Computer Science and Software Engineering",
+    "Bachelor of Science in Computer Science and Computer Graphics",
+    "Bachelor of Science in Computer Science and Computer Security",
+    "Bachelor of Science in Computer Science and Computer Networks",
+    "Bachelor of Science in Computer Science and Operating Systems",
+    "Bachelor of Science in Computer Science and Algorithms",
+    "Bachelor of Science in Computer Science and Data Structures",
+    "Bachelor of Science in Computer Science and Artificial Intelligence",
+    "Bachelor of Science in Computer Science and Machine Learning",
+    "Bachelor of Science in Computer Science and Deep Learning",
+    "Bachelor of Science in Computer Science and Computer Vision",
+    "Bachelor of Science in Computer Science and Natural Language Processing",
+    "Bachelor of Science in Computer Science and Robotics",
+    "Bachelor of Science in Computer Science and Cybersecurity",
     "Master of Science in Computer Science",
     "Master of Science in Software Engineering",
     "Master of Science in Information Technology",
@@ -100,6 +121,8 @@ const validCourses = [
     "Master of Science in Marketing Analytics",
     "Master of Science in Operations Analytics",
 ]
+
+const usedCourseNames = new Set<string>();
 
 const mockCourse = (courseid: number) => {
     const mock = {
@@ -116,6 +139,11 @@ const mockCourse = (courseid: number) => {
         },
     } as any;
 
+    // while the course name is already used on the usedCourseNames, generate a new one
+    while (usedCourseNames.has(mock.course.course_name)) {
+        mock.course.course_name = faker.helpers.arrayElement(validCourses);
+    }
+    mock.course.course_code = `${mock.course.course_name.substring(0, 3).toUpperCase()}-${mock.course.course_code}`;
     mock.course.field_of_study = mock.course.course_name.split(' in ')[1];
     mock.course.course_type = mock.course.course_name.includes('Bachelor') ? 'Bachelor' : 'Master';
     mock.course.course_duration_years = mock.course.course_type === 'Bachelor' ? 3 : 2;
@@ -137,26 +165,25 @@ const mockCourse = (courseid: number) => {
 
     let remainingCredits = credits; // Para ajustar erros de arredondamento
     const subjects: any[] = [];
-    const usedSubjectNames = new Set<string>(); // Controlar disciplinas já adicionadas
+    const usedSubjectNames = new Set<string>();
 
     for (let year = 1; year <= years; year++) {
         for (let semester = 0; semester < 2; semester++) {
             let semesterCredits = semester === 1 && year === years
-                ? remainingCredits // Ajuste no último semestre
+                ? remainingCredits
                 : creditsPerSemester;
 
             while (semesterCredits > 0) {
                 const subjectCredits = Math.min(semesterCredits, faker.helpers.arrayElement([4, 6]));
                 let subjectName: string;
 
-                // Gera um nome único
+                // Gera um subject único
                 do {
                     subjectName = faker.helpers.arrayElement(validSubjects);
                 } while (usedSubjectNames.has(subjectName));
 
                 usedSubjectNames.add(subjectName);
 
-                // Adiciona a disciplina
                 subjects.push({
                     subject_id: faker.number.int(),
                     subject_name: subjectName,
@@ -181,7 +208,6 @@ const mockCourse = (courseid: number) => {
     return mock;
 };
 
-
 // ex: http://localhost:3001/api/courses/1
 router.get('/:courseid', async (req: any, res: any) => {
     try {
@@ -198,6 +224,9 @@ router.get('/:courseid', async (req: any, res: any) => {
         } else {
             const course = mockCourse(intCourseId);
             await RedisClient.set(bussiness_key, JSON.stringify(course));
+
+            // send the message to the kafka topic
+            KafkaProducer.sendMessages('course-topic', course);
             return res.json(course);
         }
     } catch (error) {

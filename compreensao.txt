@@ -10,5 +10,4 @@
 [X]deve ser capaz de revelar informações sobre propinas em atraso ou apoios financeiros recebidos
 [X]e sobre os diversos cursos (maior adesão, maior sucesso de saída)
 
-
-
+conseguir increver o mesmo aluno em 1/2/3/4/5/6 anos letivos seguidos

@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
 import RedisClient from '../../infra/redis';
+import KafkaProducer from '../../infra/kafka';
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/enrollment/:enrollmentid/subject/:subjectid', async (req: any, res:
         const { enrollmentid, subjectid } = req.params;
         const intenrollmentid = parseInt(enrollmentid);
         const intsubjectid = parseInt(subjectid);
-    
+
         if (isNaN(intenrollmentid) || isNaN(intsubjectid)) {
             return res.status(400).json({ error: 'Invalid enrollment ID or subject ID' });
         }
@@ -49,6 +50,10 @@ router.get('/enrollment/:enrollmentid/subject/:subjectid', async (req: any, res:
         } else {
           const mockperf = mockPerformanceData(parseInt(enrollmentid), parseInt(subjectid));
           await RedisClient.set(bussiness_key, JSON.stringify(mockperf));
+
+            // send the message to the kafka topic
+            await KafkaProducer.sendMessages('performance-topic', mockperf);
+
           return res.json(mockperf);
         }
       } catch (error) {

@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 async function makePostRequest(index) {
-  const url = 'http://127.0.0.1:3001/mock/user';
+  const url = 'http://localhost:3001/api/enrollments/course/7/student/23/year/2020';
 
   try {
     // console.log(`Making request ${index}...`);

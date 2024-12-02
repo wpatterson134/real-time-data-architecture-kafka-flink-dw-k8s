@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
 import { parse } from 'path';
 import RedisClient from '../../infra/redis';
+import KafkaProducer from '../../infra/kafka';
 
 const router = express.Router();
 
@@ -74,6 +75,9 @@ router.get('/student/:studentid/year/:academicyear', async (req: any, res: any) 
         } else {
             const benchmark = mockBenchmark(studentId, academicYear);
             await RedisClient.set(bussiness_key, JSON.stringify(benchmark));
+
+            // send the message to kafka
+            await KafkaProducer.sendMessages('benchmark-topic', benchmark);
             return res.json(benchmark);
         }
     } catch (error) {

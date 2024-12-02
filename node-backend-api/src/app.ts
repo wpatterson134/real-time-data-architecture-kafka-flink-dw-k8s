@@ -17,6 +17,7 @@ const requestTimestampCounter = new Counter({
   help: 'Timestamp of each request',
   labelNames: ['method', 'route', 'status', 'timestamp'],
 });
+
 register.registerMetric(requestTimestampCounter);
 const swaggerOptions = {
   definition: {

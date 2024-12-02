@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { faker } from '@faker-js/faker';
 import { parse } from 'path';
 import RedisClient from '../../infra/redis';
+import KafkaProducer from '../../infra/kafka';
 
 const router = express.Router();
 
@@ -41,6 +42,19 @@ const generateMockEnrollment = (student: any, academicyear: number, courseid: nu
     paid = totalFees;
     pending = 0;
     paymentStatus = 'Paid';
+  }
+
+  if(!isCurrentYear){
+    paid = totalFees;
+    pending = 0;
+    paymentStatus = 'Paid';
+  }
+
+  // check if the current year is the academic year
+  if (isCurrentYear) {
+    pending = totalFees;
+    paid = 0;
+    paymentStatus = 'Pending';
   }
 
 
@@ -178,7 +192,7 @@ const generateReferences = (pending: number, paid: number, academicyear: any) =>
           to: new Date(new Date(generationDate).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       }).toISOString().split('T')[0];
 
-      const status = faker.helpers.arrayElement(['Paid', 'Pending', 'Expired']);
+      let status = faker.helpers.arrayElement(['Paid', 'Pending', 'Expired']);
 
       let referenceValue = 0;
       if (status === 'Expired') {
@@ -193,6 +207,12 @@ const generateReferences = (pending: number, paid: number, academicyear: any) =>
           remainingPending -= referenceValue;
           totalPending += referenceValue;
       }
+
+      // if the expiration date is before the current date, the reference is expired
+      if (new Date(expirationDate) < new Date() && status == 'Pending') {
+          status = 'Expired';
+      }
+
 
       references.push({
           entity: faker.number.int({ min: 1001, max: 9999 }), // Entity number for the MB payment
@@ -295,6 +315,7 @@ const generateMockStudent = (studentid: number, academicyear: number) => ({
 // ex: http://localhost:3001/api/enrollments/course/1/student/1/year/2020
 router.get('/course/:courseid/student/:studentid/year/:academicyear', async (req: any, res: any) => {
   try {
+
     const { courseid, studentid, academicyear } = req.params;
     const intCourseId = parseInt(courseid);
     const intStudentId = parseInt(studentid);
@@ -303,16 +324,37 @@ router.get('/course/:courseid/student/:studentid/year/:academicyear', async (req
     if (isNaN(intCourseId) || isNaN(intStudentId) || isNaN(intAcademicYear)) {
         return res.status(400).json({ error: 'Invalid course ID or student ID or academic year' });
     }
+
     const bussiness_key = `enrll-${intCourseId}-${intStudentId}-${intAcademicYear}`;
     const enrollment_data = await RedisClient.get(bussiness_key)
+
     if (enrollment_data) {
         return res.json(JSON.parse(enrollment_data));
     } else {
       const mockStudent = generateMockStudent(parseInt(studentid),parseInt(academicyear));
-      const mockEnrollment = generateMockEnrollment(mockStudent, parseInt(academicyear), parseInt(courseid) );
-      await RedisClient.set(bussiness_key, JSON.stringify(mockEnrollment));
-      return res.json(mockEnrollment);
+      const mockEnrollment = generateMockEnrollment(mockStudent, parseInt(academicyear), parseInt(courseid)) as any;
+
+      // generate at least 3 enrollments for the student
+      const enrollments = [];
+      enrollments.push(mockEnrollment);
+
+      for (let i = 0; i < faker.number.int({ min: 2, max: 4 }); i++) {
+        // check if the currnet mockEnrollment is paid
+        if (mockEnrollment.enrollment.financial_status.payment_status === 'Paid') {
+          const nextAcademicYear = parseInt(academicyear) + i + 1;
+          enrollments.push(generateMockEnrollment(mockStudent, nextAcademicYear, parseInt(courseid)));
+        }else{
+          break;
+        }
+      }
+      await RedisClient.set(bussiness_key, JSON.stringify(enrollments));
+
+      // Send the enrollment data to Kafka
+      await KafkaProducer.sendMessages('enrollments-topic', enrollments);
+      
+      return res.json(enrollments);
     }
+
   } catch (error) {
       return res.status(500).json({ error: "Internal server error", details: error });
   }
