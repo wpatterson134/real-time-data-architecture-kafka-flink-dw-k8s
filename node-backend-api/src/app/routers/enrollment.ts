@@ -351,7 +351,6 @@ router.get('/course/:courseid/student/:studentid/year/:academicyear', async (req
 
       // Send the enrollment data to Kafka
       await KafkaProducer.sendMessages('enrollments-topic', enrollments);
-      
       return res.json(enrollments);
     }
 

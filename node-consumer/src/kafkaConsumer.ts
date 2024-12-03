@@ -10,8 +10,7 @@ const kafka = new Kafka({
 });
 
 const consumer = kafka.consumer({ groupId: 'course-consumer-group-16' });
-const topics_to_subscribe = ['enrollments-topic', 'performance-topic'];
-// const topics_to_subscribe = ['course-topic'];
+const topics_to_subscribe = ['enrollments-topic', 'performance-topic','course-topic'];
 
 const run = async () => {
   await consumer.connect();
