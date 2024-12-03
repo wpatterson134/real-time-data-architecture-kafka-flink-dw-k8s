@@ -1,10 +1,12 @@
 package pt.jorgeduarte.flink_consumer.persistent.entities.dimension;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "D_COURSES")
-public class Course {
+public class D_Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COURSE_ID")
@@ -15,7 +17,7 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "FIELD_OF_STUDY_ID")
-    private FieldOfStudy fieldOfStudy;
+    private D_FieldOfStudy fieldOfStudy;
 
     @Column(name = "COURSE_TYPE")
     private String courseType;

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "D_STUDENTS")
-public class Student {
+public class D_Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "STUDENT_ID")
@@ -12,11 +12,11 @@ public class Student {
 
     @ManyToOne
     @JoinColumn(name = "SOCIOECONOMIC_ID")
-    private SocioeconomicData socioeconomicData;
+    private D_SocioeconomicData socioeconomicData;
 
     @ManyToOne
     @JoinColumn(name = "DEMOGRAPHIC_ID")
-    private StudentDemographicData demographicData;
+    private D_StudentDemographicData demographicData;
 
     private String name;
 

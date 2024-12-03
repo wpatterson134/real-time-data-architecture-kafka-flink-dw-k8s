@@ -7,6 +7,6 @@ import java.sql.SQLException;
 
 public interface IMessageProcessor<T> {
      DataStream<T> processMessage(DataStream<String> kafkaStream, StreamExecutionEnvironment env);
-     boolean verifyExistance(T message) throws SQLException;
+     boolean alreadyExists(T message) throws SQLException;
      void save(T entity) throws SQLException;
 }

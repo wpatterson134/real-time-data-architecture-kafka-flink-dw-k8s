@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "D_SUBJECTS")
-public class Subject {
+public class D_Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SUBJECT_ID")
@@ -15,7 +15,7 @@ public class Subject {
 
     @ManyToOne
     @JoinColumn(name = "COURSE_ID")
-    private Course course;
+    private D_Course course;
 
     private Integer ects;
 

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "D_ENROLLMENT_FINANCIAL_STATUS")
-public class EnrollmentFinancialStatus {
+public class D_EnrollmentFinancialStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FINANCIAL_STATUS_ID")

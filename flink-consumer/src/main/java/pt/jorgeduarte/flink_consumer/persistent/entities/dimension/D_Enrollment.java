@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "D_ENROLLMENTS")
-public class Enrollment {
+public class D_Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ENROLLMENT_ID")
@@ -15,19 +15,19 @@ public class Enrollment {
 
     @ManyToOne
     @JoinColumn(name = "STUDENT_ID")
-    private Student student;
+    private D_Student student;
 
     @ManyToOne
     @JoinColumn(name = "COURSE_ID")
-    private Course course;
+    private D_Course course;
 
     @ManyToOne
     @JoinColumn(name = "ACADEMIC_YEAR_ID")
-    private AcademicYear academicYear;
+    private D_AcademicYear academicYear;
 
     @ManyToOne
     @JoinColumn(name = "FINANCIAL_STATUS_ID")
-    private EnrollmentFinancialStatus financialStatus;
+    private D_EnrollmentFinancialStatus financialStatus;
 
     @Column(name = "ENROLLMENT_DATE")
     private LocalDate enrollmentDate;

@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "D_ACADEMIC_YEAR")
-public class AcademicYear {
+public class D_AcademicYear {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ACADEMIC_YEAR_ID")

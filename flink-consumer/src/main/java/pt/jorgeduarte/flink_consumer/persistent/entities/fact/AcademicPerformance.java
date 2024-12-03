@@ -1,9 +1,9 @@
 package pt.jorgeduarte.flink_consumer.persistent.entities.fact;
 
 import jakarta.persistence.*;
-import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.Enrollment;
-import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.Subject;
-import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.Time;
+import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.D_Enrollment;
+import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.D_Subject;
+import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.D_Time;
 
 import java.math.BigDecimal;
 
@@ -17,15 +17,15 @@ public class AcademicPerformance {
 
     @ManyToOne
     @JoinColumn(name = "ENROLLMENT_ID")
-    private Enrollment enrollment;
+    private D_Enrollment enrollment;
 
     @ManyToOne
     @JoinColumn(name = "SUBJECT_ID")
-    private Subject subject;
+    private D_Subject subject;
 
     @ManyToOne
     @JoinColumn(name = "TIME_ID")
-    private Time time;
+    private D_Time time;
 
     @Column(name = "FINAL_GRADE", precision = 5, scale = 2)
     private BigDecimal finalGrade;

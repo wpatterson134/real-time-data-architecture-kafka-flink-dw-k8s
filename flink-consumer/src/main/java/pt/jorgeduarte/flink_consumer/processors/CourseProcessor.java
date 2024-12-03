@@ -1,13 +1,14 @@
 package pt.jorgeduarte.flink_consumer.processors;
 
 import com.google.gson.Gson;
-import jakarta.annotation.PostConstruct;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pt.jorgeduarte.flink_consumer.messages.CourseMessage;
+import pt.jorgeduarte.flink_consumer.persistent.entities.dimension.D_Course;
+import pt.jorgeduarte.flink_consumer.persistent.mappers.CourseMapper;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,6 +17,8 @@ import java.util.Objects;
 public class CourseProcessor implements IMessageProcessor<CourseMessage>, Serializable {
     private static final Logger logger = LoggerFactory.getLogger(CourseProcessor.class);
     private static  Gson gson = new Gson();
+    //private transient D_CourseRepository courseRepository;
+
     @Override
     public DataStream<CourseMessage> processMessage(DataStream<String> kafkaStream, StreamExecutionEnvironment env) {
         return kafkaStream
@@ -23,8 +26,9 @@ public class CourseProcessor implements IMessageProcessor<CourseMessage>, Serial
                     logger.info("[COURSE] - Processing message: {}", message);
                     try {
                         CourseMessage courseMessage = gson.fromJson(message, CourseMessage.class);
-                        // logger.info("Deserialized message into CourseMessage: {}", courseMessage);
-                        // logger.info("total subjects: "+ String.valueOf(courseMessage.getCourse().getSubjects().size()));
+                        if(!alreadyExists(courseMessage)){
+                            save(courseMessage);
+                        }
                         return courseMessage;
                     } catch (Exception e) {
                         logger.error("Failed to process message: {}", message, e);
@@ -35,14 +39,20 @@ public class CourseProcessor implements IMessageProcessor<CourseMessage>, Serial
     }
 
     @Override
-    public boolean verifyExistance(CourseMessage message) {
-        // Implement your verification logic here (e.g., check if the course already exists in DB)
+    public boolean alreadyExists(CourseMessage message) {
+        //List<D_Course> courses = courseRepository.findAll();
+
+        //D_Course course = courses.stream()
+        //        .filter(s -> s.getCourseName().equals(message.getCourse().getCourseName()))
+        //        .findFirst()
+        //        .orElse(null);
+        //return course != null;
         return false;
     }
 
     @Override
-    public void save(CourseMessage entity) {
-        // Implement your saving logic (e.g., save the course to a repository)
-        logger.info("New course saved successfully for: {}", entity.getCourse().getCourseName());
+    public void save(CourseMessage message) {
+        D_Course d_course = CourseMapper.INSTANCE.toCourseEntity(message.getCourse());
+        logger.info("course mapped successfully");
     }
 }
