@@ -381,3 +381,14 @@ D_ENROLLMENTS.init({
   tableName: 'D_ENROLLMENTS',
   timestamps: false,
 });
+
+
+F_ACADEMIC_PERFORMANCE.belongsTo(D_ENROLLMENTS, {
+  as: 'Enrollment',
+  foreignKey: 'ENROLLMENT_ID',
+});
+
+D_ENROLLMENTS.belongsTo(D_STUDENTS, {
+  as: 'Student', // Alias for the association
+  foreignKey: 'STUDENT_ID',
+});

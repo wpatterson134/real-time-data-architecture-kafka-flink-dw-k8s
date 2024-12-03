@@ -18,7 +18,7 @@ const process = async (courseMessage: CourseMessage) => {
       where: { COURSE_NAME: course.course_name },
     });
     if (existingCourse) {
-      console.log(`Course "${course.course_name}" already exists in the Oracle database`);
+      // console.log(`Course "${course.course_name}" already exists in the Oracle database`);
       return
     }else{
 
