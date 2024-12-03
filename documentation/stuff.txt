@@ -10,6 +10,20 @@
 [X]deve ser capaz de revelar informações sobre propinas em atraso ou apoios financeiros recebidos
 [X]e sobre os diversos cursos (maior adesão, maior sucesso de saída)
 [X]conseguir increver o mesmo aluno em 1/2/3/4/5/6 anos letivos seguidos
-[ ]dividir as cadeiras do aluno pelos anos letivos que ele tem do que ele fez (mensagem de enrollment)
+[x]dividir as cadeiras do aluno pelos anos letivos que ele tem do que ele fez (mensagem de enrollment)
+
+[ ] ligacoes bd no datawarehouse creation - liquibase
+[ ] Create the missing scripts to populate the DW with everything
+[ ] popular datawarehose com 30k alunos
+[ ] popular datawarehose com 30 cursos
+[ ] popular tabela F_benchmark com pelo menos 10k registos
+[ ] popular tabela F_performance com pelo menos 10k registos
+[ ] criacao de docker files, docker compose e k8 deployment files
+[ ] testar cluster com tudo
+[ ] criar documentacao.
+    [ ] responder questoes ficha
+[ ] criar dicionario de dados.
+[ ] check geral
+[ ] submit
 
 
