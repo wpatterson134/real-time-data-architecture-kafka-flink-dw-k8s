@@ -8,8 +8,9 @@ const kafka = new Kafka({
   brokers: ['localhost:9092'],
 });
 
-const consumer = kafka.consumer({ groupId: 'course-consumer-group-11' });
+const consumer = kafka.consumer({ groupId: 'course-consumer-group-16' });
 const topics_to_subscribe = ['enrollments-topic'];
+// const topics_to_subscribe = ['course-topic'];
 
 const run = async () => {
   await consumer.connect();

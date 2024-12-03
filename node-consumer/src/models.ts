@@ -171,6 +171,8 @@ export class D_SUBJECTS extends Model {
   public COURSE_ID!: number;
   public ECTS!: number;
   public SUBJECT_TYPE!: string;
+  public SEMESTER!: number;
+  public YEAR!: number;
 }
 
 D_SUBJECTS.init({
@@ -189,6 +191,8 @@ D_SUBJECTS.init({
   },
   ECTS: DataTypes.INTEGER,
   SUBJECT_TYPE: DataTypes.STRING(50),
+  SEMESTER: DataTypes.NUMBER,
+  YEAR: DataTypes.NUMBER,
 }, {
   sequelize,  // Sequelize instance is expected to be defined elsewhere
   tableName: 'D_SUBJECTS',

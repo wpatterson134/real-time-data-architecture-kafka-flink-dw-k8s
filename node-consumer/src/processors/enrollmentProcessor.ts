@@ -1,12 +1,20 @@
-import { D_ACADEMIC_YEAR, D_COURSES, D_ENROLLMENTS, D_SOCIOECONOMIC_DATA, D_STUDENTS, D_STUDENT_DEMOGRAPHIC_DATA } from "../models";
+import { TIME } from "sequelize";
+import { D_ACADEMIC_YEAR, D_COURSES, D_ENROLLMENTS, D_SOCIOECONOMIC_DATA, D_STUDENTS, D_STUDENT_DEMOGRAPHIC_DATA, D_SUBJECTS, F_ACADEMIC_PERFORMANCE } from "../models";
 import { EnrollmentMessage } from "../types";
 
 async function process(enrollmentMessages: EnrollmentMessage[]) {
 
+    let studentIdUsed = 0;
+    let academicYearsUser = []
+    let academicYearsEnrollmentTypes = []
+    let courseIdUsed = enrollmentMessages[0].enrollment.course_id;
+    let firstEnrollmentYear = enrollmentMessages[0].academic_year.year;
+    let enrollmentsIds = [] as any;
+
     for(let i = 0; i < enrollmentMessages.length;){
         const enrollmentMessage = enrollmentMessages[i];
         console.log('Processing Enrollment for:', enrollmentMessage.student.full_name);
-
+        academicYearsEnrollmentTypes.push(enrollmentMessage.enrollment.enrollment_mode);
         // Check if the course exists in the database
         const existingCourse = await D_COURSES.findOne({
             where: { COURSE_ID: enrollmentMessage.enrollment.course_id },
@@ -67,6 +75,7 @@ async function process(enrollmentMessages: EnrollmentMessage[]) {
             console.log('Student created successfully.');
         }
 
+        studentIdUsed = studentID;
         const academicYearIdExists = await D_ACADEMIC_YEAR.findOne({
             where: { ACADEMIC_YEAR: enrollmentMessage.academic_year.year.toString() },
         });
@@ -83,6 +92,7 @@ async function process(enrollmentMessages: EnrollmentMessage[]) {
             console.log('Academic year created successfully.');
             academicYearId = academicYear.ACADEMIC_YEAR_ID;
         }
+        academicYearsUser.push(academicYearId);
 
         // Check the enrollment status
         const studentAlreadyEnrolled = await D_ENROLLMENTS.findAll({
@@ -118,9 +128,159 @@ async function process(enrollmentMessages: EnrollmentMessage[]) {
             TUITION_FEES: studentEnrollment.financial_status.total_fees,
         });
 
+        enrollmentsIds.push(enrollment.ENROLLMENT_ID);
+
         console.log('Enrollment processed successfully.');
         i += 1;
     }
+
+    // grab the course subjects
+    const courseSubjects = await D_SUBJECTS.findAll({
+        where: { COURSE_ID: courseIdUsed },
+    });
+
+    let subjects = courseSubjects
+    let usedSubjects = [] as any
+    const subjects_divided_by_year = {}
+
+    // for years that / enrollment - enrollment_mode
+    for (let index = 0; index < academicYearsEnrollmentTypes.length; index++) {
+        const enrollment_type = academicYearsEnrollmentTypes[index];
+        const year = academicYearsUser[index] as number;
+
+        const availableSubjects = subjects.filter(subject => subject.YEAR <= (index + 1));
+        // remove the available subjects the ones on the usedSubjects
+        const availableSubjectsFiltered = availableSubjects.filter(subject => !usedSubjects.includes(subject.SUBJECT_ID));
+
+        // if the enrollment type is full-time and the year is the first year , max subjects is 6 per semester (12 total)
+        // if the enrollment type is full-time and the year is not first year , max subjects increases by 2 each year
+        // if the enrollment type is not full-time and the year is the first year , max subjects is 3
+        // the first year can only contain subjects from the first year
+        // the second year can only contain subjects from the second year and below
+        // the third year can only contain subjects from the third year and below
+
+        // check if the available subjectsFilteres is empty
+        if (availableSubjectsFiltered.length <= 0) {
+            console.log('No subjects available for the year:', year);
+            // were going to mock that the studnet didnt pass some subjects
+            // grab some 3/4 subjects from a random previous year
+            let randomPreviousYear = Math.floor(Math.random() * (index - 1) + 1);
+            const previousYear = randomPreviousYear;
+            const minSubjects = 2;
+            const maxSubjects = 7;
+            const randomSubjects = Math.floor(Math.random() * (maxSubjects - minSubjects + 1) + minSubjects);
+            // @ts-ignore
+            let previousYearSubjects = subjects_divided_by_year[previousYear];
+            // randomize the subjects of previous year
+            previousYearSubjects = previousYearSubjects.sort(() => Math.random() - 0.5);
+            const previousYearSubjectsFiltered = previousYearSubjects.slice(0, randomSubjects);
+            // @ts-ignore
+            subjects_divided_by_year[year] = previousYearSubjectsFiltered.map(subject => {
+                return {
+                    SUBJECT_ID: subject.SUBJECT_ID,
+                    SUBJECT_NAME: subject.SUBJECT_NAME,
+                    ECTS: subject.ECTS,
+                    SUBJECT_TYPE: subject.SUBJECT_TYPE,
+                    SEMESTER: subject.SEMESTER,
+                    YEAR: subject.YEAR,
+                }
+            });
+            continue;
+        }
+
+        if (enrollment_type === 'Full-time') {
+            if (index === 0) {
+                const firstYearSubjects = availableSubjectsFiltered.filter(subject => subject.YEAR === 1);
+                const firstYearSubjectsFiltered = firstYearSubjects.slice(0, 16);
+                usedSubjects.push(...firstYearSubjectsFiltered.map(subject => subject.SUBJECT_ID));
+                // @ts-ignore
+                subjects_divided_by_year[year] = firstYearSubjectsFiltered.map(subject => {
+                    return {
+                        SUBJECT_ID: subject.SUBJECT_ID,
+                        SUBJECT_NAME: subject.SUBJECT_NAME,
+                        ECTS: subject.ECTS,
+                        SUBJECT_TYPE: subject.SUBJECT_TYPE,
+                        SEMESTER: subject.SEMESTER,
+                        YEAR: subject.YEAR,
+                    }
+                });
+            } else {
+                const yearSubjects = availableSubjectsFiltered.filter(subject => subject.YEAR <= (index + 1));
+                const yearSubjectsFiltered = yearSubjects.slice(0, 16 + (2 * index));
+                usedSubjects.push(...yearSubjectsFiltered.map(subject => subject.SUBJECT_ID));
+                // @ts-ignore
+                subjects_divided_by_year[year] = yearSubjectsFiltered.map(subject => {
+                    return {
+                        SUBJECT_ID: subject.SUBJECT_ID,
+                        SUBJECT_NAME: subject.SUBJECT_NAME,
+                        ECTS: subject.ECTS,
+                        SUBJECT_TYPE: subject.SUBJECT_TYPE,
+                        SEMESTER: subject.SEMESTER,
+                        YEAR: subject.YEAR,
+                    }
+                });
+            }
+        } else {
+            const yearSubjects = availableSubjectsFiltered.filter(subject => subject.YEAR === (index + 1));
+            const yearSubjectsFiltered = yearSubjects.slice(0, 8);
+            usedSubjects.push(...yearSubjectsFiltered.map(subject => subject.SUBJECT_ID));
+            // @ts-ignore
+            subjects_divided_by_year[year] = yearSubjectsFiltered.map(subject => {
+                return {
+                    SUBJECT_ID: subject.SUBJECT_ID,
+                    SUBJECT_NAME: subject.SUBJECT_NAME,
+                    ECTS: subject.ECTS,
+                    SUBJECT_TYPE: subject.SUBJECT_TYPE,
+                    SEMESTER: subject.SEMESTER,
+                    YEAR: subject.YEAR,
+                }
+            });
+        }
+
+    }
+
+    // console.log(academicYearsEnrollmentTypes)
+    // console.log(academicYearsUser)
+    // console.log('Subjects divided by year:')
+    // console.log(subjects_divided_by_year);
+
+    // based on the subjects_divided_by_year create the enrollment for the subjects
+    let indexYear = 0;
+
+    // check if the user already have enrollments for the academic year
+    const studentAlreadyEnrolled = await F_ACADEMIC_PERFORMANCE.findAll({
+        where: { ENROLLMENT_ID: enrollmentsIds[indexYear] },
+    });
+
+    if (studentAlreadyEnrolled.length > 0) {
+        console.log('Student already enrolled in the subjects for this academic year.');
+        return;
+    }else{
+        Object.keys(subjects_divided_by_year).forEach(async (year) => {
+            // @ts-ignore
+            const subjectsToEnroll = subjects_divided_by_year[year];
+            let subjectsYear = (firstEnrollmentYear - 1 + parseInt(year));
+
+            // Selected the academic year_id based on the subjectsYear
+            const academicYear = await D_ACADEMIC_YEAR.findOne({
+                where: { ACADEMIC_YEAR: subjectsYear },
+            });
+
+            subjectsToEnroll.forEach(async (subject: any) => {
+                F_ACADEMIC_PERFORMANCE.create({
+                    ENROLLMENT_ID: enrollmentsIds[indexYear],
+                    SUBJECT_ID : subject.SUBJECT_ID,
+                    TIME_ID : null,
+                    FINAL_GRADE: null,
+                    STATUS: -1,
+                });
+            });
+
+            indexYear += 1;
+        });
+        console.log('Enrollment on subjects processed successfully.');
+    }
+
 
 }
 

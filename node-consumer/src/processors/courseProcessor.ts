@@ -30,6 +30,7 @@ const process = async (courseMessage: CourseMessage) => {
          });
         console.log(`Course "${course.course_name}" saved to the Oracle database`);
 
+
         // add the course subjects to the course
         const subjects = course.subjects;
         for (const subject of subjects) {
@@ -38,6 +39,8 @@ const process = async (courseMessage: CourseMessage) => {
             SUBJECT_NAME: subject.subject_name,
             ECTS : subject.subject_credits,
             SUBJECT_TYPE: 'Mandatory',
+            SEMESTER: subject.first_semester === 1 ? 1 : 2,
+            YEAR: subject.year,
             });
         }
         console.log(`Course subjects saved to the Oracle database`);

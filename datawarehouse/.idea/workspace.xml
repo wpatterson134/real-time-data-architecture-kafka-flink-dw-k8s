@@ -5,18 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8966c398-28ab-46f1-968d-c9c5d61b85a7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.env.production" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/pt/jorgeduarte/datawarehouse/DatabaseConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/pt/jorgeduarte/datawarehouse/MainApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/db/changelog/master.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/db/changelog/schema/V1__create_star_schema.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/changelog/schema/V1__create_constellation.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/changelog/schema/V1__create_constellation.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../node-consumer/src/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../node-consumer/src/models.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../node-consumer/src/processors/courseProcessor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../node-consumer/src/processors/courseProcessor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../node-consumer/src/processors/enrollmentProcessor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../node-consumer/src/processors/enrollmentProcessor.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +53,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Duarte/Documents/github/jorgermduarte/real-time-data-architecture-kafka-flink-dw-k8s/flink-consumer",
+    "last_opened_file_path": "C:/Users/Duarte/Documents/github/jorgermduarte/real-time-data-architecture-kafka-flink-dw-k8s/datawarehouse",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -68,6 +61,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
+    "spring.configuration.checksum": "7c499af6c6d01b7653b4536141bf8c43",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -122,6 +116,7 @@
       <option name="presentableId" value="Default" />
       <updated>1729102067050</updated>
       <workItem from="1729102068677" duration="962000" />
+      <workItem from="1733231275461" duration="1442000" />
     </task>
     <servers />
   </component>
