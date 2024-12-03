@@ -346,11 +346,14 @@ databaseChangeLog:
                   name: ACADEMIC_YEAR_OF_COMPLETION_ID
                   type: int
               - column:
-                  name: VERIFICATION_TIME_ID
+                  name: VERIFICATION_TIME_DATE_ID
                   type: int
               - column:
-                  name: WORKING_ON_FIELD_SINCE_ID
+                  name: WORKING_ON_FIELD_DATE_SINCE_ID
                   type: int
+              - column:
+                  name: COURSE_CONCLUDED
+                  type: boolean
               - column:
                   name: IS_WORKING_ON_THE_FIELD
                   type: boolean

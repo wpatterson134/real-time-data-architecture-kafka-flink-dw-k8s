@@ -1,8 +1,9 @@
 import { Kafka } from 'kafkajs';
-import { CourseMessage, EnrollmentMessage, PerformanceMessage } from './types';
+import { BenchmarkMessage, CourseMessage, EnrollmentMessage, PerformanceMessage } from './types';
 import { CourseProcessor } from './processors/courseProcessor';
 import { EnrollmentProcessor } from './processors/enrollmentProcessor';
 import { PerformanceProcessor } from './processors/performanceProcessor';
+import { BenchmarkProcessor } from './processors/benchmarkProcessor';
 
 const kafka = new Kafka({
   clientId: 'course-consumer',
@@ -10,7 +11,7 @@ const kafka = new Kafka({
 });
 
 const consumer = kafka.consumer({ groupId: 'course-consumer-group-16' });
-const topics_to_subscribe = ['enrollments-topic', 'performance-topic','course-topic'];
+const topics_to_subscribe = ['enrollments-topic', 'performance-topic','course-topic', 'benchmark-topic'];
 
 const run = async () => {
   await consumer.connect();
@@ -35,6 +36,10 @@ const run = async () => {
             console.log('> Processing performance message:');
             const performanceMessage: PerformanceMessage = JSON.parse(messageValue);
             await PerformanceProcessor.process(performanceMessage);
+          } else if (topic === 'benchmark-topic'){
+            console.log('> Processing benchmark message:');
+            const benchmarkMessage: BenchmarkMessage = JSON.parse(messageValue);
+            await BenchmarkProcessor.process(benchmarkMessage);
           }
         } catch (error) {
           console.error('Error processing message:', error);

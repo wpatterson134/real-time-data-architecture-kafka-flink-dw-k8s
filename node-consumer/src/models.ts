@@ -325,7 +325,6 @@ D_ENROLLMENT_FINANCIAL_STATUS.init({
   timestamps: false,
 });
 
-
 // D_ENROLLMENTS Model
 export class D_ENROLLMENTS extends Model {
   public ENROLLMENT_ID!: number;
@@ -382,7 +381,6 @@ D_ENROLLMENTS.init({
   timestamps: false,
 });
 
-
 F_ACADEMIC_PERFORMANCE.belongsTo(D_ENROLLMENTS, {
   as: 'Enrollment',
   foreignKey: 'ENROLLMENT_ID',
@@ -392,3 +390,78 @@ D_ENROLLMENTS.belongsTo(D_STUDENTS, {
   as: 'Student', // Alias for the association
   foreignKey: 'STUDENT_ID',
 });
+
+export class F_BENCHMARK_SUCCESS extends Model {
+  public BENCHMARK_SUCCESS_ID!: number;
+  public STUDENT_ID!: number;
+  public COURSE_ID!: number;
+  public ACADEMIC_YEAR_OF_COMPLETION_ID!: number | null;
+  public VERIFICATION_TIME_DATE_ID!: number;
+  public WORKING_ON_FIELD_DATE_SINCE_ID?: number | null;
+  public COURSE_CONCLUDED!: boolean;
+  public IS_WORKING_ON_THE_FIELD!: boolean;
+}
+
+F_BENCHMARK_SUCCESS.init(
+  {
+    BENCHMARK_SUCCESS_ID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    STUDENT_ID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'D_STUDENTS', // Table this field references
+        key: 'STUDENT_ID',
+      },
+    },
+    COURSE_ID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'D_COURSES',
+        key: 'COURSE_ID',
+      },
+    },
+    ACADEMIC_YEAR_OF_COMPLETION_ID: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'D_ACADEMIC_YEAR',
+        key: 'ACADEMIC_YEAR_ID',
+      },
+    },
+    VERIFICATION_TIME_DATE_ID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'D_TIME',
+        key: 'TIME_ID',
+      },
+    },
+    WORKING_ON_FIELD_DATE_SINCE_ID: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'D_TIME',
+        key: 'TIME_ID',
+      },
+    },
+    COURSE_CONCLUDED: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+    IS_WORKING_ON_THE_FIELD: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'F_BENCHMARK_SUCCESS',
+    tableName: 'F_BENCHMARK_SUCCESS',
+    timestamps: false,
+  }
+);

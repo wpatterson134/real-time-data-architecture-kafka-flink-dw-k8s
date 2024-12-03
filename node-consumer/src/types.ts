@@ -157,3 +157,11 @@ export type PerformanceMessage = {
   final_grade: number;
   status: string;
 };
+
+export interface BenchmarkMessage {
+  student_id: number;
+  is_working_on_field: boolean;
+  academic_year: AcademicYear;
+  started_working_on_field: string; // ISO date format
+  verification_call: string;        // ISO date format
+}
