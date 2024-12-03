@@ -1,14 +1,15 @@
 import { Kafka } from 'kafkajs';
-import { CourseMessage } from './types';
+import { CourseMessage, EnrollmentMessage } from './types';
 import { CourseProcessor } from './processors/courseProcessor';
+import { EnrollmentProcessor } from './processors/enrollmentProcessor';
 
 const kafka = new Kafka({
   clientId: 'course-consumer',
   brokers: ['localhost:9092'],
 });
 
-const consumer = kafka.consumer({ groupId: 'course-consumer-group-02' });
-const topics_to_subscribe = ['course-topic'];
+const consumer = kafka.consumer({ groupId: 'course-consumer-group-11' });
+const topics_to_subscribe = ['enrollments-topic'];
 
 const run = async () => {
   await consumer.connect();
@@ -20,12 +21,16 @@ const run = async () => {
       const messageValue = message.value?.toString();
       if (messageValue) {
         try {
-          const courseMessage: CourseMessage = JSON.parse(messageValue);
 
           // handle the different topic types
           if(topic === 'course-topic'){
             console.log('> Processing course message:');
+            const courseMessage: CourseMessage = JSON.parse(messageValue);
             await CourseProcessor.process(courseMessage);
+          } else if(topic === 'enrollments-topic'){
+            console.log('> Processing enrollment message:');
+            const enrollmentMessage: EnrollmentMessage[] = JSON.parse(messageValue);
+            await EnrollmentProcessor.process(enrollmentMessage);
           }
 
         } catch (error) {

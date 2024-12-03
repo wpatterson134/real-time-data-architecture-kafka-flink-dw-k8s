@@ -9,12 +9,11 @@ const process = async (courseMessage: CourseMessage) => {
       where: { FIELD_NAME: course.field_of_study },
       defaults: { FIELD_NAME: course.field_of_study },
     });
-  
+
     if (created) {
       console.log(`Field of study "${course.field_of_study}" saved to the Oracle database`);
     }
-  
-  
+
     const existingCourse = await D_COURSES.findOne({
       where: { COURSE_NAME: course.course_name },
     });
