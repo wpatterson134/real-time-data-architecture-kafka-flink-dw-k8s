@@ -1,7 +1,8 @@
 import { Kafka } from 'kafkajs';
-import { CourseMessage, EnrollmentMessage } from './types';
+import { CourseMessage, EnrollmentMessage, PerformanceMessage } from './types';
 import { CourseProcessor } from './processors/courseProcessor';
 import { EnrollmentProcessor } from './processors/enrollmentProcessor';
+import { PerformanceProcessor } from './processors/performanceProcessor';
 
 const kafka = new Kafka({
   clientId: 'course-consumer',
@@ -9,7 +10,7 @@ const kafka = new Kafka({
 });
 
 const consumer = kafka.consumer({ groupId: 'course-consumer-group-16' });
-const topics_to_subscribe = ['enrollments-topic'];
+const topics_to_subscribe = ['enrollments-topic', 'performance-topic'];
 // const topics_to_subscribe = ['course-topic'];
 
 const run = async () => {
@@ -22,7 +23,6 @@ const run = async () => {
       const messageValue = message.value?.toString();
       if (messageValue) {
         try {
-
           // handle the different topic types
           if(topic === 'course-topic'){
             console.log('> Processing course message:');
@@ -32,8 +32,11 @@ const run = async () => {
             console.log('> Processing enrollment message:');
             const enrollmentMessage: EnrollmentMessage[] = JSON.parse(messageValue);
             await EnrollmentProcessor.process(enrollmentMessage);
+          }else if (topic === 'performance-topic'){
+            console.log('> Processing performance message:');
+            const performanceMessage: PerformanceMessage = JSON.parse(messageValue);
+            await PerformanceProcessor.process(performanceMessage);
           }
-
         } catch (error) {
           console.error('Error processing message:', error);
         }

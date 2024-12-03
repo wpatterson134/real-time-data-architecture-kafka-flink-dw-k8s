@@ -48,13 +48,12 @@ router.get('/enrollment/:enrollmentid/subject/:subjectid', async (req: any, res:
         if (perf_data) {
             return res.json(JSON.parse(perf_data));
         } else {
-          const mockperf = mockPerformanceData(parseInt(enrollmentid), parseInt(subjectid));
-          await RedisClient.set(bussiness_key, JSON.stringify(mockperf));
-
+            const mockperf = mockPerformanceData(parseInt(enrollmentid), parseInt(subjectid));
+            await RedisClient.set(bussiness_key, JSON.stringify(mockperf));
             // send the message to the kafka topic
             await KafkaProducer.sendMessages('performance-topic', mockperf);
 
-          return res.json(mockperf);
+            return res.json(mockperf);
         }
       } catch (error) {
           return res.status(500).json({ error: "Internal server error", details: error });

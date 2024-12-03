@@ -149,3 +149,11 @@ export interface AcademicYear {
     enrollment: Enrollment;
     financial_aid: FinancialAid;
 }
+
+export type PerformanceMessage = {
+  enrollment_id: number;
+  subject_id: number;
+  grade: number;
+  final_grade: number;
+  status: string;
+};
