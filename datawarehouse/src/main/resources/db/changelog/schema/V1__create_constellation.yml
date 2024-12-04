@@ -253,6 +253,15 @@ databaseChangeLog:
                   name: SUBJECT_ID
                   type: int
               - column:
+                  name: STUDENT_ID
+                  type: int
+              - column:
+                  name: ACADEMIC_YEAR_ID
+                  type: int
+              - column:
+                  name: COURSE_ID
+                  type: int
+              - column:
                   name: TIME_ID
                   type: int
               - column:
@@ -314,14 +323,20 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: TUITION_FEES_DUE
+                  name: TOTAL_FEES
                   type: decimal(10,2)
               - column:
-                  name: FINANCIAL_STATUS
-                  type: varchar(20)
+                  name: TOTAL_PAID
+                  type: decimal(10,2)
+              - column:
+                  name: TOTAL_PENDING
+                  type: decimal(10,2)
               - column:
                   name: FINANCIAL_SUPPORT_AMOUNT
                   type: decimal(10,2)
+              - column:
+                  name: STATUS
+                  type: varchar(20)
 
   - changeSet:
       id: 12
@@ -357,3 +372,103 @@ databaseChangeLog:
               - column:
                   name: IS_WORKING_ON_THE_FIELD
                   type: boolean
+  - changeSet:
+      id: 13
+      author: jorge.duarte
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: D_STUDENTS
+            baseColumnNames: SOCIOECONOMIC_ID
+            constraintName: FK_STUDENTS_SOCIOECONOMIC
+            referencedTableName: D_SOCIOECONOMIC_DATA
+            referencedColumnNames: SOCIOECONOMIC_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_STUDENTS
+            baseColumnNames: DEMOGRAPHIC_ID
+            constraintName: FK_STUDENTS_DEMOGRAPHIC
+            referencedTableName: D_STUDENT_DEMOGRAPHIC_DATA
+            referencedColumnNames: STUDENT_DEMOGRAPHIC_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_COURSES
+            baseColumnNames: FIELD_OF_STUDY_ID
+            constraintName: FK_COURSES_FIELD_OF_STUDY
+            referencedTableName: D_FIELDS_OF_STUDY
+            referencedColumnNames: FIELD_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_SUBJECTS
+            baseColumnNames: COURSE_ID
+            constraintName: FK_SUBJECTS_COURSES
+            referencedTableName: D_COURSES
+            referencedColumnNames: COURSE_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_ACADEMIC_PERFORMANCE
+            baseColumnNames: ENROLLMENT_ID
+            constraintName: FK_ACADEMIC_PERFORMANCE_ENROLLMENTS
+            referencedTableName: D_ENROLLMENTS
+            referencedColumnNames: ENROLLMENT_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_ACADEMIC_PERFORMANCE
+            baseColumnNames: COURSE_ID
+            constraintName: FK_ACADEMIC_PERFORMANCE_COURSE
+            referencedTableName: D_COURSES
+            referencedColumnNames: COURSE_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_ACADEMIC_PERFORMANCE
+            baseColumnNames: SUBJECT_ID
+            constraintName: FK_ACADEMIC_PERFORMANCE_SUBJECTS
+            referencedTableName: D_SUBJECTS
+            referencedColumnNames: SUBJECT_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_ACADEMIC_PERFORMANCE
+            baseColumnNames: TIME_ID
+            constraintName: FK_ACADEMIC_PERFORMANCE_TIME
+            referencedTableName: D_TIME
+            referencedColumnNames: TIME_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_ENROLLMENTS
+            baseColumnNames: STUDENT_ID
+            constraintName: FK_ENROLLMENTS_STUDENTS
+            referencedTableName: D_STUDENTS
+            referencedColumnNames: STUDENT_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_ENROLLMENTS
+            baseColumnNames: COURSE_ID
+            constraintName: FK_ENROLLMENTS_COURSES
+            referencedTableName: D_COURSES
+            referencedColumnNames: COURSE_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_ENROLLMENTS
+            baseColumnNames: ACADEMIC_YEAR_ID
+            constraintName: FK_ENROLLMENTS_ACADEMIC_YEAR
+            referencedTableName: D_ACADEMIC_YEAR
+            referencedColumnNames: ACADEMIC_YEAR_ID
+        - addForeignKeyConstraint:
+            baseTableName: D_ENROLLMENTS
+            baseColumnNames: FINANCIAL_STATUS_ID
+            constraintName: FK_ENROLLMENTS_FINANCIAL_STATUS
+            referencedTableName: D_ENROLLMENT_FINANCIAL_STATUS
+            referencedColumnNames: FINANCIAL_STATUS_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_BENCHMARK_SUCCESS
+            baseColumnNames: STUDENT_ID
+            constraintName: FK_BENCHMARK_SUCCESS_STUDENTS
+            referencedTableName: D_STUDENTS
+            referencedColumnNames: STUDENT_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_BENCHMARK_SUCCESS
+            baseColumnNames: COURSE_ID
+            constraintName: FK_BENCHMARK_SUCCESS_COURSES
+            referencedTableName: D_COURSES
+            referencedColumnNames: COURSE_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_BENCHMARK_SUCCESS
+            baseColumnNames: ACADEMIC_YEAR_OF_COMPLETION_ID
+            constraintName: FK_BENCHMARK_SUCCESS_ACADEMIC_YEAR
+            referencedTableName: D_ACADEMIC_YEAR
+            referencedColumnNames: ACADEMIC_YEAR_ID
+        - addForeignKeyConstraint:
+            baseTableName: F_BENCHMARK_SUCCESS
+            baseColumnNames: VERIFICATION_TIME_DATE_ID
+            constraintName: FK_BENCHMARK_SUCCESS_TIME
+            referencedTableName: D_TIME
+            referencedColumnNames: TIME_ID

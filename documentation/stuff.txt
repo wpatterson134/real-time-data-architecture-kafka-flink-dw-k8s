@@ -12,14 +12,21 @@
 [X]conseguir increver o mesmo aluno em 1/2/3/4/5/6 anos letivos seguidos
 [x]dividir as cadeiras do aluno pelos anos letivos que ele tem do que ele fez (mensagem de enrollment)
 
-[ ] ligacoes bd no datawarehouse creation - liquibase
+[X] F_ACADEMIC_PERFORMANCE / add STUDENT_ID
+[x] F_ACADEMIC_PERFORMANCE / add ACADEMIC_YEAR AND COURSE_ID?
+[x] ligacoes bd no datawarehouse creation - liquibase
+[x] FINANCIAL_STATUS do aluno
+[x] popular datawarehose com muitos alunos
+[x] popular datawarehose com 30 cursos
+[x] popular tabela F_performance com pelo menos 10k registos (tem 100k+)
+
 [ ] Create the missing scripts to populate the DW with everything
-[ ] popular datawarehose com 30k alunos
-[ ] popular datawarehose com 30 cursos
+
 [ ] popular tabela F_benchmark com pelo menos 10k registos
-[ ] popular tabela F_performance com pelo menos 10k registos
 [ ] criacao de docker files, docker compose e k8 deployment files
 [ ] testar cluster com tudo
+
+
 [ ] criar documentacao.
     [ ] responder questoes ficha
 [ ] criar dicionario de dados.

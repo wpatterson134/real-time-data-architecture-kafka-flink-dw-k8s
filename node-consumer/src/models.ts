@@ -256,6 +256,9 @@ export class F_ACADEMIC_PERFORMANCE extends Model {
   public ENROLLMENT_SUBJECT_ID!: number;
   public ENROLLMENT_ID!: number;
   public SUBJECT_ID!: number;
+  public COURSE_ID!: number;
+  public STUDENT_ID!: number;
+  public ACADEMIC_YEAR_ID!: number;
   public TIME_ID!: number;
   public FINAL_GRADE!: number;
   public STATUS!: number;
@@ -299,9 +302,11 @@ F_ACADEMIC_PERFORMANCE.init({
 // D_ENROLLMENT_FINANCIAL_STATUS Model
 export class D_ENROLLMENT_FINANCIAL_STATUS extends Model {
   public FINANCIAL_STATUS_ID!: number;
-  public TUITION_FEES_DUE!: number;
-  public FINANCIAL_STATUS!: string;
+  public TOTAL_FEES!: number;
+  public TOTAL_PAID!: number;
+  public TOTAL_PENDING!: number;
   public FINANCIAL_SUPPORT_AMOUNT!: number;
+  public STATUS!: string;
 }
 
 D_ENROLLMENT_FINANCIAL_STATUS.init({
@@ -310,14 +315,20 @@ D_ENROLLMENT_FINANCIAL_STATUS.init({
     primaryKey: true,
     autoIncrement: true,
   },
-  TUITION_FEES_DUE: {
+  TOTAL_FEES: {
     type: DataTypes.DECIMAL(10, 2),
   },
-  FINANCIAL_STATUS: {
-    type: DataTypes.STRING(20),
+  TOTAL_PAID: {
+    type: DataTypes.DECIMAL(10, 2),
+  },
+  TOTAL_PENDING: {
+    type: DataTypes.DECIMAL(10, 2),
   },
   FINANCIAL_SUPPORT_AMOUNT: {
     type: DataTypes.DECIMAL(10, 2),
+  },
+  STATUS: {
+    type: DataTypes.STRING(20),
   },
 }, {
   sequelize,  // Sequelize instance is expected to be defined elsewhere

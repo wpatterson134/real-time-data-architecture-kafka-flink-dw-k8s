@@ -2,6 +2,7 @@ import {
     D_ACADEMIC_YEAR,
     D_COURSES,
     D_ENROLLMENTS,
+    D_ENROLLMENT_FINANCIAL_STATUS,
     D_SOCIOECONOMIC_DATA,
     D_STUDENTS,
     D_STUDENT_DEMOGRAPHIC_DATA,
@@ -20,7 +21,7 @@ import {
     const courseID = enrollmentMessages[0].enrollment.course_id;
 
     for (const enrollmentMessage of enrollmentMessages) {
-      const { enrollment, student, socioeconomics, demographics, academic_year } = enrollmentMessage;
+      const { enrollment, student, socioeconomics, demographics, academic_year, financial_aid } = enrollmentMessage;
 
       // Verificar curso
       const existingCourse = await D_COURSES.findOne({ where: { COURSE_ID: enrollment.course_id } });
@@ -34,7 +35,7 @@ import {
       academicYearsProcessed.push(academicYearObj.ACADEMIC_YEAR);
 
       // Verificar inscrição do estudante no curso no ano acadêmico
-      const studentEnrollmentObj = await getOrCreateEnrollment(enrollment, studentID, existingCourse.COURSE_ID, academicYearObj.ACADEMIC_YEAR_ID);
+      const studentEnrollmentObj = await getOrCreateEnrollment(financial_aid, enrollment, studentID, existingCourse.COURSE_ID, academicYearObj.ACADEMIC_YEAR_ID);
 
         // verifica se ja tem inscricao nas disciplinas (F_ACADEMIC_PERFORMANCE)
         const alreadyHasSubjects = await checkIfSubjectFerformanceEnrollmentExists(studentEnrollmentObj.ENROLLMENT_ID, studentID, existingCourse.COURSE_ID, academicYearObj);
@@ -114,6 +115,9 @@ async function createAdemicPerformanceData(courseID: number, enrollmentsList: D_
                     await F_ACADEMIC_PERFORMANCE.create({
                         ENROLLMENT_ID: enrollmentInfo.ENROLLMENT_ID,
                         SUBJECT_ID: subject.SUBJECT_ID,
+                        COURSE_ID: courseID,
+                        ACADEMIC_YEAR_ID: enrollmentInfo.ACADEMIC_YEAR_ID,
+                        STUDENT_ID: enrollmentInfo.STUDENT_ID,
                         TIME_ID: dateTime.TIME_ID,
                         FINAL_GRADE: null,
                         STATUS: -1,
@@ -180,7 +184,7 @@ async function checkIfSubjectFerformanceEnrollmentExists(enrollmentId: number, s
     return false;
 }
 
- async function getOrCreateEnrollment(enrollment: any, studentID: number, courseID: number, academicYearId: number) {
+ async function getOrCreateEnrollment(financial_aid: any, enrollment: any, studentID: number, courseID: number, academicYearId: number) {
     const existingEnrollment = await D_ENROLLMENTS.findOne({
       where: {
         STUDENT_ID: studentID,
@@ -190,11 +194,13 @@ async function checkIfSubjectFerformanceEnrollmentExists(enrollmentId: number, s
     });
     if (existingEnrollment) return existingEnrollment;
 
+    const existingFinancialStatus = await createEnrollmentFinancialStatus(enrollment, financial_aid);
+
     const enrollmentData = {
       STUDENT_ID: studentID,
       COURSE_ID: courseID,
       ACADEMIC_YEAR_ID: academicYearId,
-      FINANCIAL_STATUS_ID: null,
+      FINANCIAL_STATUS_ID: existingFinancialStatus?.FINANCIAL_STATUS_ID,
       ENROLLMENT_MODE: enrollment.enrollment_mode,
       ENROLLMENT_STATUS: enrollment.enrollment_status,
       ENROLLMENT_DATE: new Date(enrollment.enrollment_date),
@@ -204,6 +210,17 @@ async function checkIfSubjectFerformanceEnrollmentExists(enrollmentId: number, s
     const newEnrollment = await D_ENROLLMENTS.create(enrollmentData);
     console.log(`[ENROLLMENT] CREATED | Student: ${studentID} | Course: ${courseID} | Year: ${academicYearId}`);
     return newEnrollment;
+  }
+
+  async function createEnrollmentFinancialStatus(enrollmentMessage: any, financial_aid: any) {
+    const newFinancialStatus = await D_ENROLLMENT_FINANCIAL_STATUS.create({
+        TOTAL_FEES: enrollmentMessage.financial_status.total_fees,
+        TOTAL_PAID: enrollmentMessage.financial_status.paid,
+        TOTAL_PENDING: enrollmentMessage.financial_status.pending,
+        FINANCIAL_SUPPORT_AMOUNT: financial_aid.financial_aid_type !== 'None' ? financial_aid.financial_aid_value : null,
+        STATUS : enrollmentMessage.financial_status.payment_status,
+    });
+    return newFinancialStatus;
   }
 
   async function getOrCreateStudent(student: any, socioeconomics: any, demographics: any) {
