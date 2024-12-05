@@ -1,5 +1,0 @@
-# create post request
-POST http://127.0.0.1:80/api/mock/user
-
-###
-GET http://127.0.0.1:80/api/mock/user/7770874667497973
