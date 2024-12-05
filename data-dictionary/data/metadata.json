@@ -1,0 +1,234 @@
+{
+  "D_STUDENTS": {
+    "description": "Students main table",
+    "columns": {
+      "STUDENT_ID": "Unique identifier for the student",
+      "SOCIOECONOMIC_ID": "Reference to socioeconomic data",
+      "DEMOGRAPHIC_ID": "Reference to demographic data",
+      "NAME": "Full name of the student"
+    },
+    "constraints": {
+      "STUDENT_ID": "Primary Key, Auto Increment",
+      "NAME": "Not Nullable"
+    },
+    "relations": [
+      "D_SOCIOECONOMIC_DATA",
+      "D_STUDENT_DEMOGRAPHIC_DATA"
+    ]
+  },
+  "D_STUDENT_DEMOGRAPHIC_DATA": {
+    "description": "Detailed demographic information for students",
+    "columns": {
+      "STUDENT_DEMOGRAPHIC_ID": "Unique identifier for demographic data",
+      "DATE_OF_BIRTH": "Student's date of birth",
+      "NATIONALITY": "Student's nationality",
+      "MARITAL_STATUS": "Current marital status",
+      "GENDER": "Student's gender",
+      "ETHNICITY": "Student's ethnicity",
+      "CITY_OF_BIRTH": "City where student was born",
+      "COUNTRY_OF_BIRTH": "Country of student's birth",
+      "CURRENT_RESIDENCE_TYPE": "Type of current residence"
+    },
+    "constraints": {
+      "STUDENT_DEMOGRAPHIC_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_STUDENTS"
+    ]
+  },
+  "D_SOCIOECONOMIC_DATA": {
+    "description": "Socioeconomic details of students",
+    "columns": {
+      "SOCIOECONOMIC_ID": "Unique identifier for socioeconomic data",
+      "SCHOLARSHIP_STATUS": "Student's scholarship status",
+      "FAMILY_INCOME": "Total family income",
+      "INCOME": "Student's personal income",
+      "RESPONSABLE_PARENT_EDUCATION_LEVEL": "Education level of responsible parent",
+      "RESPONSABLE_PARENT_OCCUPATION": "Occupation of responsible parent",
+      "HAS_INTERNET_ACCESS": "Whether student has internet access",
+      "HAS_COMPUTER_ACCESS": "Whether student has computer access",
+      "WORKING_STATUS": "Current working status of the student"
+    },
+    "constraints": {
+      "SOCIOECONOMIC_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_STUDENTS"
+    ]
+  },
+  "D_COURSES": {
+    "description": "Information about academic courses",
+    "columns": {
+      "COURSE_ID": "Unique identifier for the course",
+      "COURSE_NAME": "Name of the course",
+      "FIELD_OF_STUDY_ID": "Reference to field of study",
+      "COURSE_TYPE": "Type or category of the course",
+      "DURATION_YEARS": "Duration of the course in years"
+    },
+    "constraints": {
+      "COURSE_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_FIELDS_OF_STUDY",
+      "D_SUBJECTS",
+      "D_ENROLLMENTS",
+      "F_ACADEMIC_PERFORMANCE"
+    ]
+  },
+  "D_FIELDS_OF_STUDY": {
+    "description": "Different fields of academic study",
+    "columns": {
+      "FIELD_ID": "Unique identifier for the field of study",
+      "FIELD_NAME": "Name of the academic field"
+    },
+    "constraints": {
+      "FIELD_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_COURSES"
+    ]
+  },
+  "D_SUBJECTS": {
+    "description": "Academic subjects within courses",
+    "columns": {
+      "SUBJECT_ID": "Unique identifier for the subject",
+      "SUBJECT_NAME": "Name of the subject",
+      "COURSE_ID": "Reference to the course the subject belongs to",
+      "ECTS": "European Credit Transfer and Accumulation System credits",
+      "SUBJECT_TYPE": "Type or category of the subject",
+      "SEMESTER": "Semester in which the subject is taught",
+      "YEAR": "Academic year of the subject"
+    },
+    "constraints": {
+      "SUBJECT_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_COURSES",
+      "F_ACADEMIC_PERFORMANCE"
+    ]
+  },
+  "D_TIME": {
+    "description": "Time dimension for tracking academic events",
+    "columns": {
+      "TIME_ID": "Unique identifier for the time record",
+      "DAY": "Day of the month",
+      "MONTH": "Month of the year",
+      "YEAR": "Calendar year",
+      "SEMESTER": "Academic semester",
+      "WEEKDAY": "Day of the week",
+      "DATE": "Full date"
+    },
+    "constraints": {
+      "TIME_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "F_ACADEMIC_PERFORMANCE",
+      "F_BENCHMARK_SUCCESS"
+    ]
+  },
+  "D_ACADEMIC_YEAR": {
+    "description": "Academic year information",
+    "columns": {
+      "ACADEMIC_YEAR_ID": "Unique identifier for the academic year",
+      "ACADEMIC_YEAR": "Representation of the academic year",
+      "START_DATE": "Beginning date of the academic year",
+      "END_DATE": "Ending date of the academic year"
+    },
+    "constraints": {
+      "ACADEMIC_YEAR_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_ENROLLMENTS",
+      "F_ACADEMIC_PERFORMANCE",
+      "F_BENCHMARK_SUCCESS"
+    ]
+  },
+  "D_ENROLLMENTS": {
+    "description": "Student enrollment details",
+    "columns": {
+      "ENROLLMENT_ID": "Unique identifier for the enrollment",
+      "STUDENT_ID": "Reference to the student",
+      "COURSE_ID": "Reference to the course",
+      "ACADEMIC_YEAR_ID": "Reference to the academic year",
+      "FINANCIAL_STATUS_ID": "Reference to financial status",
+      "ENROLLMENT_MODE": "Mode of enrollment",
+      "ENROLLMENT_DATE": "Date of enrollment",
+      "ENROLLMENT_STATUS": "Current status of enrollment",
+      "TUITION_FEES": "Amount of tuition fees"
+    },
+    "constraints": {
+      "ENROLLMENT_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_STUDENTS",
+      "D_COURSES",
+      "D_ACADEMIC_YEAR",
+      "D_ENROLLMENT_FINANCIAL_STATUS",
+      "F_ACADEMIC_PERFORMANCE"
+    ]
+  },
+  "D_ENROLLMENT_FINANCIAL_STATUS": {
+    "description": "Financial details of student enrollment",
+    "columns": {
+      "FINANCIAL_STATUS_ID": "Unique identifier for financial status",
+      "TOTAL_FEES": "Total fees for enrollment",
+      "TOTAL_PAID": "Total amount paid",
+      "TOTAL_PENDING": "Total amount pending payment",
+      "FINANCIAL_SUPPORT_AMOUNT": "Amount of financial support",
+      "STATUS": "Current financial status"
+    },
+    "constraints": {
+      "FINANCIAL_STATUS_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_ENROLLMENTS"
+    ]
+  },
+  "F_ACADEMIC_PERFORMANCE": {
+    "description": "Fact table tracking student academic performance",
+    "columns": {
+      "ENROLLMENT_SUBJECT_ID": "Unique identifier for enrollment subject",
+      "ENROLLMENT_ID": "Reference to enrollment",
+      "SUBJECT_ID": "Reference to specific subject",
+      "STUDENT_ID": "Reference to student",
+      "ACADEMIC_YEAR_ID": "Reference to academic year",
+      "COURSE_ID": "Reference to course",
+      "TIME_ID": "Reference to time dimension",
+      "FINAL_GRADE": "Final grade for the subject",
+      "STATUS": "Performance status"
+    },
+    "constraints": {
+      "ENROLLMENT_SUBJECT_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_ENROLLMENTS",
+      "D_COURSES",
+      "D_STUDENTS",
+      "D_ACADEMIC_YEAR",
+      "D_SUBJECTS",
+      "D_TIME"
+    ]
+  },
+  "F_BENCHMARK_SUCCESS": {
+    "description": "Tracking student success and career progression",
+    "columns": {
+      "BENCHMARK_SUCCESS_ID": "Unique identifier for success benchmark",
+      "STUDENT_ID": "Reference to student",
+      "COURSE_ID": "Reference to course",
+      "ACADEMIC_YEAR_OF_COMPLETION_ID": "Academic year of course completion",
+      "VERIFICATION_TIME_DATE_ID": "Time of success verification",
+      "WORKING_ON_FIELD_DATE_SINCE_ID": "Time since working in the field",
+      "COURSE_CONCLUDED": "Whether the course was concluded",
+      "IS_WORKING_ON_THE_FIELD": "Whether student is working in their field of study"
+    },
+    "constraints": {
+      "BENCHMARK_SUCCESS_ID": "Primary Key, Auto Increment"
+    },
+    "relations": [
+      "D_STUDENTS",
+      "D_COURSES",
+      "D_ACADEMIC_YEAR",
+      "D_TIME"
+    ]
+  }
+}

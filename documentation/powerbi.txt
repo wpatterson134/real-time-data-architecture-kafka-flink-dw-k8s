@@ -1,0 +1,16 @@
+[ ] maior adesão
+[ ] maior sucesso de saída
+[ ] distribuicao alunos por cursos
+[ ] filtros por semestres e anos letivos
+[ ] distribuicao alunos com cursos completos vs nao completois
+[ ] distribuicao inscricoes com regime full-time vs parcial
+[ ] identificacao matricuals pendentes / nao concluidas
+[ ] identificao alunos com propinas em atraso
+[ ] identificao alunos com apoios financeiros recebidos
+[ ] distribuicao sucesso academico por subject
+
+
+//  relatórios criados no Power BI e Microsoft Analysis
+[ ] export relatorios?
+
+[ ] distribuicao alunos por classe social (talvez)

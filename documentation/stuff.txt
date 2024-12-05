@@ -23,14 +23,16 @@
 [x] Create the missing scripts to populate the DW with everything
 [x] Na performanceProcessor , so deve atualizar notas de alunos que tenham o enrollment ACTIVE
 [x] popular tabela F_benchmark com pelo menos 10k registos ( )
+[x] criar dicionario de dados.
 
+// 05 de Dezembro
 [ ] criar dashboards power bi
+[ ] criar documentacao.
+    [ ] responder questoes ficha
 [ ] criacao de docker files, docker compose e k8 deployment files
 [ ] testar cluster com tudo
 
-[ ] criar documentacao.
-    [ ] responder questoes ficha
-[ ] criar dicionario de dados.
+// 06 de Dezembro
 [ ] check geral
 [ ] submit
 
