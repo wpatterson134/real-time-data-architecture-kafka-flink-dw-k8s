@@ -1,134 +1,134 @@
-// Dimensão de alunos
 Table D_STUDENTS {
-  STUDENT_ID int [pk, increment] // Primary Key
-  SOCIOECONOMIC_ID int [ref: > D_SOCIOECONOMIC_DATA.SOCIOECONOMIC_ID] // Foreign Key to Socioeconomic Status
-  DEMOGRAPHIC_ID int [ref: > D_STUDENT_DEMOGRAPHIC_DATA.STUDENT_DEMOGRAPHIC_ID]
-  NAME varchar(100)
+  STUDENT_ID int [pk, increment]
+  SOCIOECONOMIC_ID int
+  DEMOGRAPHIC_ID int
+  NAME varchar(100) [not null]
 }
 
 Table D_STUDENT_DEMOGRAPHIC_DATA {
-  STUDENT_DEMOGRAPHIC_ID int [pk, increment] // Primary Key
-  DATE_OF_BIRTH date // Date of Birth
-  NATIONALITY varchar(50) // Nationality
-  MARITAL_STATUS varchar(50) // Marital Status
-  GENDER varchar(20) // Gender of the student
-  ETHNICITY varchar(50) // Ethnic background
-  CITY_OF_BIRTH varchar(100) // City
-  COUNTRY_OF_BIRTH varchar(100) //Country of Birth
-  CURRENT_RESIDENCE_TYPE varchar(50) // Urban/Rural
+  STUDENT_DEMOGRAPHIC_ID int [pk, increment]
+  DATE_OF_BIRTH date
+  NATIONALITY varchar(50)
+  MARITAL_STATUS varchar(50)
+  GENDER varchar(20)
+  ETHNICITY varchar(50)
+  CITY_OF_BIRTH varchar(100)
+  COUNTRY_OF_BIRTH varchar(100)
+  CURRENT_RESIDENCE_TYPE varchar(50)
 }
 
 Table D_SOCIOECONOMIC_DATA {
-  SOCIOECONOMIC_ID int [pk, increment] // Primary Key
-  SCHOLARSHIP_STATUS varchar(50) // Yes/No
-  FAMILY_INCOME decimal(10, 2) // Family income in local currency
+  SOCIOECONOMIC_ID int [pk, increment]
+  SCHOLARSHIP_STATUS varchar(50)
+  FAMILY_INCOME decimal(10, 2)
   INCOME decimal(10, 2)
-  RESPONSABLE_PARENT_EDUCATION_LEVEL varchar(100) // Highest level of education of parents
-  RESPONSABLE_PARENT_OCCUPATION varchar(100) // Occupation of the responsible parent
-  HAS_INTERNET_ACCESS bool // Yes/No
-  HAS_COMPUTER_ACCESS bool // Yes/No
-  WORKING_STATUS varchar(50) // Yes/No/Part-time
+  RESPONSABLE_PARENT_EDUCATION_LEVEL varchar(100)
+  RESPONSABLE_PARENT_OCCUPATION varchar(100)
+  HAS_INTERNET_ACCESS boolean
+  HAS_COMPUTER_ACCESS boolean
+  WORKING_STATUS varchar(50)
 }
 
-// Dimensão de cursos
 Table D_COURSES {
-  COURSE_ID int [pk, increment] // Primary Key
+  COURSE_ID int [pk, increment]
   COURSE_NAME varchar(100)
-  FIELD_OF_STUDY_ID int [ref: > D_FIELDS_OF_STUDY.FIELD_ID] // Foreign Key to Fields of Study
-  COURSE_TYPE varchar(50) // Bachelor or Master
-  DURATION_YEARS int // Duration in years
+  FIELD_OF_STUDY_ID int
+  COURSE_TYPE varchar(50)
+  DURATION_YEARS int
 }
 
-// Dimensão de áreas de estudo (snowflake)
 Table D_FIELDS_OF_STUDY {
-  FIELD_ID int [pk, increment] // Primary Key
-  FIELD_NAME varchar(50) // Example: Management, Technology
+  FIELD_ID int [pk, increment]
+  FIELD_NAME varchar(50)
 }
 
-// Dimensão de disciplinas
 Table D_SUBJECTS {
-  SUBJECT_ID int [pk, increment] // Primary Key
+  SUBJECT_ID int [pk, increment]
   SUBJECT_NAME varchar(100)
-  COURSE_ID int [ref: > D_COURSES.COURSE_ID] // Foreign Key to Courses
-  ECTS int // Credits assigned
-  SUBJECT_TYPE varchar(50) // Mandatory or Optional
+  COURSE_ID int
+  ECTS int
+  SUBJECT_TYPE varchar(50)
+  SEMESTER int
+  YEAR int
 }
 
-// Dimensão de tempo (snowflake)
 Table D_TIME {
-  TIME_ID int [pk, increment] // Primary Key
+  TIME_ID int [pk, increment]
   DAY int
   MONTH int
   YEAR int
   SEMESTER int
-  WEEKDAY varchar(20) // e.g., Monday, Tuesday, etc.
-  DATE date // Complete Date
+  WEEKDAY varchar(20)
+  DATE date
 }
 
-// Dimensão de ano letivo
 Table D_ACADEMIC_YEAR {
-  ACADEMIC_YEAR_ID int [pk, increment] // Primary Key
-  ACADEMIC_YEAR varchar(20) // Example: 2023/2024
+  ACADEMIC_YEAR_ID int [pk, increment]
+  ACADEMIC_YEAR varchar(20)
   START_DATE date
   END_DATE date
 }
 
 
-Table F_ACADEMIC_PERFORMANCE{
-    ENROLLMENT_SUBJECT_ID int [pk, increment] 
-    ENROLLMENT_ID int [ref: > D_ENROLLMENTS.ENROLLMENT_ID] 
-    SUBJECT_ID int [ref: > D_SUBJECTS.SUBJECT_ID] 
-      TIME_ID int [ref: > D_TIME.TIME_ID]
-    FINAL_GRADE decimal(5,2)
-    STATUS int
-}
-
-// **Dimensão de matrículas (Enrolments)**
 Table D_ENROLLMENTS {
-  ENROLLMENT_ID int [pk, increment] // Primary Key
-  STUDENT_ID int [ref: > D_STUDENTS.STUDENT_ID] // Foreign Key to Students
-  COURSE_ID int [ref: > D_COURSES.COURSE_ID] // Foreign Key to Courses
-  ACADEMIC_YEAR_ID int [ref: > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID] // Foreign Key to Academic Year
-  FINANCIAL_STATUS_ID int  [ref: > D_ENROLLMENT_FINANCIAL_STATUS.FINANCIAL_STATUS_ID]
-  ENROLLMENT_MODE varchar(50) // Full-time, Part-time, 50%, etc.
-  ENROLLMENT_DATE date // Date when the student enrolled in the course
-  ENROLLMENT_STATUS varchar(50)  // Pending, Completed, Rejected
-  TUITION_FEES decimal(10,2) 
+  ENROLLMENT_ID int [pk, increment]
+  STUDENT_ID int
+  COURSE_ID int
+  ACADEMIC_YEAR_ID int
+  FINANCIAL_STATUS_ID int
+  ENROLLMENT_MODE varchar(50)
+  ENROLLMENT_DATE date
+  ENROLLMENT_STATUS varchar(50)
+  TUITION_FEES decimal(10,2)
 }
 
-// Dimensão de situação financeira (associada à matrícula)
 Table D_ENROLLMENT_FINANCIAL_STATUS {
-  FINANCIAL_STATUS_ID int [pk, increment] // Primary Key
-  TUITION_FEES_DUE decimal(10,2) // Tuition fees due based on enrollment mode
-  FINANCIAL_STATUS varchar(20) // Paid, Pending, Overdue
+  FINANCIAL_STATUS_ID int [pk, increment]
+  TOTAL_FEES decimal(10,2)
+  TOTAL_PAID decimal(10,2)
+  TOTAL_PENDING decimal(10,2)
   FINANCIAL_SUPPORT_AMOUNT decimal(10,2)
+  STATUS varchar(20)
 }
-
-// **Dimensão de referências de pagamento (multibanco)**
-// Table D_PAYMENT_TUITION {
- //  PAYMENT_TUITION_ID int [pk, increment] // Primary Key
-//   FINANCIAL_STATUS_ID int [ref: > D_ENROLLMENT_FINANCIAL_STATUS.FINANCIAL_STATUS_ID] // Foreign Key to Financial Status
-//   REFERENCE_CODE varchar(50) // Unique reference code for payment
-//   PAYMENT_AMOUNT decimal(10,2) // Amount to be paid
-//   PAYMENT_DATE date // Date when payment was made
-// }
-
-// Fato de exames (Relatório de exames feitos pelos alunos)
-//Table D_EXAMS {
- // EXAM_ID int [pk, increment] // Primary Key
- // TIME_ID int [ref: > D_TIME.TIME_ID]
- // STUDENT_ID int [ref: > D_STUDENTS.STUDENT_ID] // Foreign Key to Students
- // SUBJECT_ID int [ref: > D_SUBJECTS.SUBJECT_ID]
- // ACADEMIC_YEAR_ID int  [ref: > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID]
- // EXAM_GRADE decimal(5,2) // Grade obtained in the exam
-//}
 
 Table F_BENCHMARK_SUCCESS {
-  BENCHMARK_SUCCESS_ID int  [pk, increment]
-  STUDENT_ID int  [ref: > D_STUDENTS.STUDENT_ID] 
-  COURSE_ID int [ref: > D_COURSES.COURSE_ID] 
-  ACADEMIC_YEAR_OF_COMPLETION_ID int [ref: > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID]
-  VERIFICATION_TIME_ID int [ref: > D_TIME.TIME_ID] 
-  WORKING_ON_FIELD_SINCE_ID  int   [ref: > D_TIME.TIME_ID]
-  IS_WORKING_ON_THE_FIELD bool 
+  BENCHMARK_SUCCESS_ID int [pk, increment]
+  STUDENT_ID int
+  COURSE_ID int
+  ACADEMIC_YEAR_OF_COMPLETION_ID int
+  VERIFICATION_TIME_DATE_ID int
+  WORKING_ON_FIELD_DATE_SINCE_ID int
+  COURSE_CONCLUDED boolean
+  IS_WORKING_ON_THE_FIELD boolean
 }
+
+Table F_ACADEMIC_PERFORMANCE {
+  ENROLLMENT_SUBJECT_ID int [pk, increment]
+  ENROLLMENT_ID int
+  SUBJECT_ID int
+  STUDENT_ID int
+  ACADEMIC_YEAR_ID int
+  COURSE_ID int
+  TIME_ID int
+  FINAL_GRADE decimal(5,2)
+  STATUS int
+}
+
+Ref: D_STUDENTS.SOCIOECONOMIC_ID > D_SOCIOECONOMIC_DATA.SOCIOECONOMIC_ID
+Ref: D_STUDENTS.DEMOGRAPHIC_ID > D_STUDENT_DEMOGRAPHIC_DATA.STUDENT_DEMOGRAPHIC_ID
+Ref: D_COURSES.FIELD_OF_STUDY_ID > D_FIELDS_OF_STUDY.FIELD_ID
+Ref: D_SUBJECTS.COURSE_ID > D_COURSES.COURSE_ID
+Ref: F_ACADEMIC_PERFORMANCE.ENROLLMENT_ID > D_ENROLLMENTS.ENROLLMENT_ID
+Ref: F_ACADEMIC_PERFORMANCE.COURSE_ID > D_COURSES.COURSE_ID
+Ref: F_ACADEMIC_PERFORMANCE.STUDENT_ID > D_STUDENTS.STUDENT_ID
+Ref: F_ACADEMIC_PERFORMANCE.ACADEMIC_YEAR_ID > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID
+Ref: F_ACADEMIC_PERFORMANCE.SUBJECT_ID > D_SUBJECTS.SUBJECT_ID
+Ref: F_ACADEMIC_PERFORMANCE.TIME_ID > D_TIME.TIME_ID
+Ref: D_ENROLLMENTS.STUDENT_ID > D_STUDENTS.STUDENT_ID
+Ref: D_ENROLLMENTS.COURSE_ID > D_COURSES.COURSE_ID
+Ref: D_ENROLLMENTS.ACADEMIC_YEAR_ID > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID
+Ref: D_ENROLLMENTS.FINANCIAL_STATUS_ID > D_ENROLLMENT_FINANCIAL_STATUS.FINANCIAL_STATUS_ID
+Ref: F_BENCHMARK_SUCCESS.STUDENT_ID > D_STUDENTS.STUDENT_ID
+Ref: F_BENCHMARK_SUCCESS.COURSE_ID > D_COURSES.COURSE_ID
+Ref: F_BENCHMARK_SUCCESS.ACADEMIC_YEAR_OF_COMPLETION_ID > D_ACADEMIC_YEAR.ACADEMIC_YEAR_ID
+Ref: F_BENCHMARK_SUCCESS.VERIFICATION_TIME_DATE_ID > D_TIME.TIME_ID
