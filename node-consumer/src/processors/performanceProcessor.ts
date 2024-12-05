@@ -1,7 +1,6 @@
 import { D_STUDENTS,D_ENROLLMENTS, F_ACADEMIC_PERFORMANCE } from "../models";
 import { PerformanceMessage } from "../types";
 
-
 const checkIfPerformanceExists = async (enrollment_id: number, subject_id: number) => {
     const studentInfo = await F_ACADEMIC_PERFORMANCE.findOne({
         where: { ENROLLMENT_ID: enrollment_id, SUBJECT_ID: subject_id },
@@ -55,7 +54,6 @@ const getStudentPerformancesOfSubject = async (enrollmentIds: number[], subjectI
     });
     return studentPerformances;
 }
-
 
 const updatePerformance = async (enrollmentId: number, subjectId: number, grade: number, status: number) => {
     return await F_ACADEMIC_PERFORMANCE.update({

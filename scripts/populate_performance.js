@@ -19,7 +19,7 @@ async function makeRequest(enrollmentId, subjectId) {
 
 async function makeMultipleRequests() {
   const totalEnrollments = 100000;
-  const totalSubjects = 3000;
+  const totalSubjects = 50;
   console.log('Starting requests...');
   for(let i = 1; i <= totalEnrollments; i++) {
     for (let index = 1; index <= totalSubjects; index++) {

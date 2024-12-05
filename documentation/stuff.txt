@@ -26,12 +26,13 @@
 [x] criar dicionario de dados.
 
 // 05 de Dezembro
+[x] arranjar forma de associar facilmente notas a alunos
+[x] criar documentacao.
+    [x] responder questoes ficha
+
 [ ] criar dashboards power bi
-[ ] criar documentacao.
-    [ ] responder questoes ficha
 [ ] criacao de docker files, docker compose e k8 deployment files
 [ ] testar cluster com tudo
-
 // 06 de Dezembro
 [ ] check geral
 [ ] submit
