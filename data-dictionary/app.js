@@ -29,6 +29,10 @@ app.get('/table/:tableName', (req, res) => {
   res.render('table', { tableName, table, relationships });
 });
 
+app.get('/relationships', (req, res) => {
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  res.render('relationships', { metadata });
+});
 
 
 app.post('/edit', (req, res) => {
