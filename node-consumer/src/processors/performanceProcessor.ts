@@ -24,16 +24,26 @@ const checkIfPerformanceExists = async (enrollment_id: number, subject_id: numbe
 
 const isPerformanceAlreadyProcessed = async (performance: F_ACADEMIC_PERFORMANCE) => {
     if(performance.STATUS !=  -1){
-        console.error(`[PERFORMANCE] Enrollment ${performance.ENROLLMENT_ID} and subject ${performance.SUBJECT_ID} is already processed`);
+        console.error(`[PERFORMANCE] Enrollment ${performance.ENROLLMENT_ID} and subject ${performance.SUBJECT_ID} is already processed`);        
         return true;
     }else{
-        return false;
+        // check if the enrollment mode is active or not
+        const enrollment = await D_ENROLLMENTS.findOne({
+            where: { ENROLLMENT_ID: performance.ENROLLMENT_ID },
+        });
+
+        if(enrollment != null && enrollment.ENROLLMENT_STATUS === "Active"){
+            return false;
+        }else{
+            // if the enrollment is not active, we can consider the performance as already processed (basically we dont process it)
+            return true;
+        }
     }
 }
 
 const getAllStudentEnrollments = async (studentID: number) => {
     const enrollments = await D_ENROLLMENTS.findAll({
-        where: { STUDENT_ID: studentID },
+        where: { STUDENT_ID: studentID, ENROLLMENT_STATUS: "Active" },
         attributes: ['ENROLLMENT_ID'],
     });
     return enrollments;
@@ -60,7 +70,7 @@ async function process(performanceMessage: PerformanceMessage) {
     // check if the enrollment exists
     const performanceExists = await checkIfPerformanceExists(performanceMessage.enrollment_id, performanceMessage.subject_id);
     if (!performanceExists) {
-        console.error(`[PERFORMANCE] Enrollment with ID ${performanceMessage.enrollment_id} does not exist`);
+        // console.error(`[PERFORMANCE] Enrollment with ID ${performanceMessage.enrollment_id} does not exist`);
         return;
     }
 

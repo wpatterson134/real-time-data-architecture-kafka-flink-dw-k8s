@@ -116,7 +116,7 @@ async function createAdemicPerformanceData(courseID: number, enrollmentsList: D_
                         ENROLLMENT_ID: enrollmentInfo.ENROLLMENT_ID,
                         SUBJECT_ID: subject.SUBJECT_ID,
                         COURSE_ID: courseID,
-                        ACADEMIC_YEAR_ID: enrollmentInfo.ACADEMIC_YEAR_ID,
+                        ACADEMIC_YEAR_ID: currentAcademicYear.ACADEMIC_YEAR_ID,
                         STUDENT_ID: enrollmentInfo.STUDENT_ID,
                         TIME_ID: dateTime.TIME_ID,
                         FINAL_GRADE: null,
@@ -137,6 +137,9 @@ async function createAdemicPerformanceData(courseID: number, enrollmentsList: D_
                     await F_ACADEMIC_PERFORMANCE.create({
                         ENROLLMENT_ID: enrollmentInfo.ENROLLMENT_ID,
                         SUBJECT_ID: subjectId,
+                        COURSE_ID: courseID,
+                        ACADEMIC_YEAR_ID: currentAcademicYear.ACADEMIC_YEAR_ID,
+                        STUDENT_ID: enrollmentInfo.STUDENT_ID,
                         TIME_ID: dateTime.TIME_ID,
                         FINAL_GRADE: null,
                         STATUS: -1,

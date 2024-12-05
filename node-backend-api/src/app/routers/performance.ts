@@ -6,26 +6,25 @@ import KafkaProducer from '../../infra/kafka';
 const router = express.Router();
 
 const mockPerformanceData = (enrollmentid: number, subjectid: number) => {
+    const chancePercentage = faker.number.int({ min: 0, max: 100 })
+    const isPositiveGrade = chancePercentage <= 98;
+
+    const minGrade = isPositiveGrade ? 9.5 : 0;
+    const maxGrade = isPositiveGrade ? 20 : 9.4;
+
     const result = {
         enrollment_id : enrollmentid,
         subject_id : subjectid,
-        grade : faker.number.float({ min: 0, max: 20 }),
+        grade : faker.number.float({ min: minGrade, max: maxGrade }),
         final_grade : 0,
         status : 'Failed',
     } as any;
 
-    if (result.grade <= 9.5) {
-        result.grade = faker.number.float({ min: 0, max: 20 });
-        result.status = 'Failed';
-    }
-
     result.grade = parseFloat(result.grade.toFixed(2));
-
 
     if (result.grade >= 9.5) {
         result.status = 'Approved';
     }
-    // if the grade is greater than 9.5, the student is approved
 
     // automatically convert to a integer the final grade
     result.final_grade = Math.round(result.grade);

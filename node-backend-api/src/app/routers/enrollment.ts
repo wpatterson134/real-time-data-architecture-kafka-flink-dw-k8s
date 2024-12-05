@@ -133,8 +133,8 @@ const generateMockEnrollment = (student: any, academicyear: number, courseid: nu
     };
   }
 
-  // 10% chance of enrollment  status not beign active
-  if (faker.number.int({ min: 1, max: 10 }) === 1) {
+  // 2% chance of enrollment  status not beign active
+  if (faker.number.int({ min: 1, max: 100 }) <= 2) {
     dataresult.enrollment.enrollment_status = faker.helpers.arrayElement(['Pending', 'Cancelled', 'Expired']);
   }
 

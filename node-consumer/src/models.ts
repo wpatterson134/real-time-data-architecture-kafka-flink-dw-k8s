@@ -291,6 +291,27 @@ F_ACADEMIC_PERFORMANCE.init({
       key: 'TIME_ID',
     },
   },
+  COURSE_ID: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: D_COURSES,
+      key: 'COURSE_ID',
+    },
+  },
+  STUDENT_ID: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: D_STUDENTS,
+      key: 'STUDENT_ID',
+    },
+  },
+  ACADEMIC_YEAR_ID: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: D_ACADEMIC_YEAR,
+      key: 'ACADEMIC_YEAR_ID',
+    },
+  },
   FINAL_GRADE: DataTypes.DECIMAL(5, 2),
   STATUS: DataTypes.INTEGER,
 }, {

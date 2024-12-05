@@ -25,19 +25,19 @@ const run = async () => {
         try {
           // handle the different topic types
           if(topic === 'course-topic'){
-            console.log('> Processing course message:');
+            // console.log('> Processing course message:');
             const courseMessage: CourseMessage = JSON.parse(messageValue);
             await CourseProcessor.process(courseMessage);
           } else if(topic === 'enrollments-topic'){
-            console.log('> Processing enrollment message:');
+            // console.log('> Processing enrollment message:');
             const enrollmentMessage: EnrollmentMessage[] = JSON.parse(messageValue);
             await EnrollmentProcessor.process(enrollmentMessage);
           }else if (topic === 'performance-topic'){
-            console.log('> Processing performance message:');
+            // console.log('> Processing performance message:');
             const performanceMessage: PerformanceMessage = JSON.parse(messageValue);
             await PerformanceProcessor.process(performanceMessage);
           } else if (topic === 'benchmark-topic'){
-            console.log('> Processing benchmark message:');
+            // console.log('> Processing benchmark message:');
             const benchmarkMessage: BenchmarkMessage = JSON.parse(messageValue);
             await BenchmarkProcessor.process(benchmarkMessage);
           }

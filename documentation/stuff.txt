@@ -16,16 +16,17 @@
 [x] F_ACADEMIC_PERFORMANCE / add ACADEMIC_YEAR AND COURSE_ID?
 [x] ligacoes bd no datawarehouse creation - liquibase
 [x] FINANCIAL_STATUS do aluno
-[x] popular datawarehose com muitos alunos
-[x] popular datawarehose com 30 cursos
-[x] popular tabela F_performance com pelo menos 10k registos (tem 100k+)
+[x] popular datawarehose com muitos alunos (30k+ que ficou)
+[x] popular datawarehose com 30 cursos (55+ cursos)
+[x] popular tabela F_performance com pelo menos 10k registos (tem mais de 1milhao+)
+[x] No performance message a percentagem positiva ser 96%
+[x] Create the missing scripts to populate the DW with everything
+[x] Na performanceProcessor , so deve atualizar notas de alunos que tenham o enrollment ACTIVE
+[x] popular tabela F_benchmark com pelo menos 10k registos ( )
 
-[ ] Create the missing scripts to populate the DW with everything
-
-[ ] popular tabela F_benchmark com pelo menos 10k registos
+[ ] criar dashboards power bi
 [ ] criacao de docker files, docker compose e k8 deployment files
 [ ] testar cluster com tudo
-
 
 [ ] criar documentacao.
     [ ] responder questoes ficha
