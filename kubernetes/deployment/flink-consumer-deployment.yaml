@@ -20,7 +20,7 @@ spec:
         - name: SPRING_PROFILES_ACTIVE
           value: "production"
         - name: KAFKA_BOOTSTRAP_SERVERS
-          value: "kafka-service:9092"
+          value: "kafka-service:29092"
         - name: KAFKA_GROUP_ID
           value: "flink-group"
         - name: KAFKA_TOPIC

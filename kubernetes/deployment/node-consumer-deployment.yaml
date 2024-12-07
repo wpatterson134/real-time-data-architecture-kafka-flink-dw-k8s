@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-consumer
+  template:
+    metadata:
+      labels:
+        app: node-consumer
+    spec:
+      containers:
+      - name: node-consumer
+        image: node-consumer:latest
+        imagePullPolicy: Never
+        env:
+        - name: ORACLE_DB_DATABASE
+          value: "jorgermduarte"
+        - name: ORACLE_DB_USER
+          value: "jorgermduarte"
+        - name: ORACLE_DB_PASSWORD
+          value: "123456"
+        - name: ORACLE_DB_PORT
+          value: "1521"
+        - name: ORACLE_DB_HOST
+          value: "oracle-db-service"
+        - name: KAFKA_BROKER
+          value: "kafka-service:29092"
+        ports:
+        - containerPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-consumer-service
+spec:
+  type: NodePort
+  ports:
+    - port: 3002
+      nodePort: 30002
+  selector:
+    app: node-consumer

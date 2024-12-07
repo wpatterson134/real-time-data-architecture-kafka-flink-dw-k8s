@@ -32,11 +32,11 @@
 [x] criar dashboards power bi
 [x] backup bd
 [x] criacao de docker files, docker compose e k8 deployment files
-[ ] testar cluster com tudo
+[x] testar cluster com tudo
+[x] check geral
 
-[ ] check geral
 [ ] submit
-
 [ ] caso tenha tempo: Visual Studio Analytics
 [ ] exemplo importacao dados em csvs (script)
+
 

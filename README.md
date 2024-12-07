@@ -39,7 +39,7 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
   kubectl apply -f .\kubernetes\deployment\zookeper-deployment.yaml
   kubectl apply -f .\kubernetes\deployment\redis-deployment.yaml
   kubectl apply -f .\kubernetes\deployment\kafka-deployment.yaml
-  kubectl apply -f .\kubernetes\jobs\kafka-topics-job.yaml
+  # kubectl apply -f .\kubernetes\jobs\kafka-topics-job.yaml -- not required, since the producers/consumers will create them automatically
 
   # build & deploy the node-backend-api image
   docker build -t node-backend-api:latest ./node-backend-api
@@ -47,15 +47,23 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
   kubectl apply -f .\kubernetes\deployment\node-backend-api-deployment.yaml
 
   # build & deploy the data warehouse image
-   kubectl apply -f .\kubernetes\deployment\oracle-db-deployment.yaml
+  kubectl apply -f .\kubernetes\deployment\oracle-db-deployment.yaml
   docker build -t data-warehouse-app:latest .\datawarehouse\
   minikube image load data-warehouse-app:latest
   kubectl apply -f .\kubernetes\jobs\data-warehouse-job.yaml
 
   # build & deploy the flink-consumer image
-  docker build -t flink-consumer:latest ./flink-consumer
-  minikube image load flink-consumer:latest
-  kubectl apply -f .\kubernetes\deployment\flink-consumer-deployment.yaml
+  # docker build -t flink-consumer:latest ./flink-consumer
+  # minikube image load flink-consumer:latest
+  # kubectl apply -f .\kubernetes\deployment\flink-consumer-deployment.yaml
+
+  # build & deploy the node-consumer image
+  docker build -t node-consumer:latest ./node-consumer
+  minikube image load node-consumer:latest
+  kubectl apply -f .\kubernetes\deployment\node-consumer-deployment.yaml
+
+  # deploy cmac
+  kubectl apply -f .\kubernetes\deployment\cmac-deployment.yaml
 
   # build & deploy the gateway
   docker build -t gateway-app:latest .\Gateway\Gateway

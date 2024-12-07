@@ -9,11 +9,23 @@
                     "Port": 3001
                 }
             ],
-            "UpstreamPathTemplate": "/api/{everything}",
-            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+            "UpstreamPathTemplate": "/api/producer/{everything}",
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
             "LoadBalancerOptions": {
                 "Type": "RoundRobin"
             }
+        },
+        {
+            "DownstreamPathTemplate": "/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "cmak-service",
+                    "Port": 9000
+                }
+            ],
+            "UpstreamPathTemplate": "/{everything}",
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ]
         }
     ],
     "GlobalConfiguration": {}
