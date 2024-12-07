@@ -87,3 +87,5 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
 User: jorgermduarte
 pass: 123456
 server: localhost:1521/jorgermduarte
+
+
