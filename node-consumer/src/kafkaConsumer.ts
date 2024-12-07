@@ -11,7 +11,7 @@ import { BenchmarkProcessor } from './processors/benchmarkProcessor';
 const kafka = new Kafka({
   clientId: 'course-consumer',
   brokers: [
-    `${process.env.KAFKA_BROKER}`,
+    process.env.KAFKA_BROKER as any,
   ],
 });
 

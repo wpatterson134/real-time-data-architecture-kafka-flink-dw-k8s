@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
   dialect: 'oracle',
   // get host from environment variable ORACLE_DB_HOST
   host: process.env.ORACLE_DB_HOST,
-  port: process.env.ORACLE_DB_PORT as unknown as number,
+  port: process.env.ORACLE_DB_PORT as any,
   username: process.env.ORACLE_DB_USER,
   password: process.env.ORACLE_DB_PASSWORD,
   database: process.env.ORACLE_DB_DATABASE,
