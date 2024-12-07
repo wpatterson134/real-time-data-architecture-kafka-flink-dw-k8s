@@ -13,6 +13,8 @@ RUN npm install
 # Copy the application code to the working directory
 COPY . .
 
+RUN rm -f .env
+
 # Expose port 3001 for the application
 EXPOSE 3001
 

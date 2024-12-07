@@ -1,4 +1,7 @@
 import { Kafka } from 'kafkajs';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { BenchmarkMessage, CourseMessage, EnrollmentMessage, PerformanceMessage } from './types';
 import { CourseProcessor } from './processors/courseProcessor';
 import { EnrollmentProcessor } from './processors/enrollmentProcessor';
@@ -7,7 +10,9 @@ import { BenchmarkProcessor } from './processors/benchmarkProcessor';
 
 const kafka = new Kafka({
   clientId: 'course-consumer',
-  brokers: ['localhost:9092'],
+  brokers: [
+    `${process.env.KAFKA_BROKER}`,
+  ],
 });
 
 const consumer = kafka.consumer({ groupId: 'course-consumer-group-16' });

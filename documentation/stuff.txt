@@ -30,13 +30,13 @@
 [x] criar documentacao.
     [x] responder questoes ficha
 [x] criar dashboards power bi
-
-[ ] criacao de docker files, docker compose e k8 deployment files
+[x] backup bd
+[x] criacao de docker files, docker compose e k8 deployment files
 [ ] testar cluster com tudo
 
-// 06 de Dezembro
 [ ] check geral
 [ ] submit
+
 [ ] caso tenha tempo: Visual Studio Analytics
 [ ] exemplo importacao dados em csvs (script)
 

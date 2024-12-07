@@ -17,6 +17,8 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
 7. **Node Consumer**: Ingests data from Kafka,  performing ETL (Extract, Transform, Load) tasks and pushing the processed data to a **Data Warehouse**.
 8. **Data Warehouse (DW)**: Stores processed data, making it accessible for analysis and reporting.
 9. **Monitoring and Logging**: Services such as Prometheus and Grafana are used to track system health, performance metrics, and logs.
+10. **Data Dictionary**: Present on the data-dictionary directory which you can execute it locally.
+11. **Scripts**: The project contains scripts to populate the oracle DW, and scripts to backup and load the oracle database.
 
 ## Local Environment:
 - **Minikube** is used to run this Kubernetes setup locally for demonstration purposes. Minikube allows all services to run within a single-node cluster, emulating a real-world microservices architecture. The environment is configured with several deployments, including Kafka, Flink, Oracle DB, Redis, Prometheus, and Redis, to mimic a distributed system.
@@ -25,7 +27,6 @@ This project showcases a local deployment using **Kubernetes with Minikube** to 
 - If this were a production-ready setup, the architecture would scale across multiple **Kubernetes clusters**. The **Master Node** would manage **worker nodes**, ensuring scalability, high availability, and failover capabilities. Using a more distributed architecture would ensure that the platform can handle real-world production loads with increased reliability and flexibility.
 
 ## Starting Minikube
-
 ```
   minikube start --cpus 5 --memory 9192 --disk-size=50g --driver=docker
   minikube dashboard

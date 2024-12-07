@@ -2,13 +2,12 @@ import express, { Request, Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import * as dotenv from 'dotenv';
+dotenv.config();
 import { collectDefaultMetrics, Registry, Counter } from 'prom-client';
 import EnrollmentRouter from './app/routers/enrollment';
 import CourseRouter from './app/routers/course';
 import PerformanceRouter from './app/routers/performance';
 import BenchmarkRouter from './app/routers/benchmark';
-
-dotenv.config();
 const register = new Registry();
 collectDefaultMetrics({ register });
 

@@ -1,13 +1,15 @@
 import { Sequelize, DataTypes, Model } from 'sequelize';
 
+
 // Oracle database configuration
 const sequelize = new Sequelize({
   dialect: 'oracle',
-  host: 'localhost',         // Oracle DB host
-  port: 1521,                // Default Oracle DB port
-  username: 'jorgermduarte',
-  password: '123456',
-  database: 'jorgermduarte',
+  // get host from environment variable ORACLE_DB_HOST
+  host: process.env.ORACLE_DB_HOST,
+  port: process.env.ORACLE_DB_PORT as unknown as number,
+  username: process.env.ORACLE_DB_USER,
+  password: process.env.ORACLE_DB_PASSWORD,
+  database: process.env.ORACLE_DB_DATABASE,
   logging: false,            // Disable logging (optional)
 });
 
